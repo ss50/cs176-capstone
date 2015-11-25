@@ -51,6 +51,11 @@ class SerialQueueFirewall {
     // each with depth queueDepth
     // they should throw FullException and EmptyException upon those conditions
     // ...
+    LamportQueue packetQueues[] = new LamportQueue[numSources];
+    
+    for (int i = 0; i < numSources; i++) {
+    	packetQueues[i] = new LamportQueue<Packet>(queueDepth);
+    }
         
     long fingerprint = 0;
     timer.startTimer();
@@ -93,6 +98,11 @@ class ParallelFirewall {
     // ...
     // Allocate and initialize bank of Lamport queues, as in SerialQueueFirewall
     // ...
+    LamportQueue packetQueues[] = new LamportQueue[numSources];
+    
+    for (int i = 0; i < numSources; i++) {
+    	packetQueues[i] = new LamportQueue<Packet>(queueDepth);
+    }
     // Allocate and initialize a Dispatcher class implementing Runnable
     // and a corresponding Dispatcher Thread
     // ...
