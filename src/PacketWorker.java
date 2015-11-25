@@ -4,7 +4,7 @@ public interface PacketWorker extends Runnable {
 
 class SerialPacketWorker implements PacketWorker {
   PaddedPrimitiveNonVolatile<Boolean> done;
-  final PacketSource pkt;
+  final PacketGenerator pkt;
   final Fingerprint residue = new Fingerprint();
   long fingerprint = 0;
   long totalPackets = 0;
@@ -12,7 +12,7 @@ class SerialPacketWorker implements PacketWorker {
   final boolean uniformBool;
   public SerialPacketWorker(
     PaddedPrimitiveNonVolatile<Boolean> done, 
-    PacketSource pkt,
+    PacketGenerator pkt,
     boolean uniformBool,
     int numSources) {
     this.done = done;
@@ -22,17 +22,7 @@ class SerialPacketWorker implements PacketWorker {
   }
   
   public void run() {
-    Packet tmp;
-    while( !done.value ) {
-      for( int i = 0; i < numSources; i++ ) {
-        if( uniformBool )
-          tmp = pkt.getUniformPacket(i);
-        else
-          tmp = pkt.getExponentialPacket(i);
-        totalPackets++;
-        fingerprint += residue.getFingerprint(tmp.iterations, tmp.seed);        
-      }
-    }
+    
   }  
 }
 

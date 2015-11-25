@@ -1,107 +1,87 @@
 class SerialFirewall {
   public static void main(String[] args) {
-    final int numPackets = Integer.parseInt(args[0]);    
-    final int numSources = Integer.parseInt(args[1]);
-    final long mean = Long.parseLong(args[2]);
-    final boolean uniformFlag = Boolean.parseBoolean(args[3]);
-    final short experimentNumber = Short.parseShort(args[4]);
+    final int numAddressesLog = Integer.parseInt(args[0]);    
+    final int numTrainsLog = Integer.parseInt(args[1]);
+    final double meanTrainSize = Double.parseDouble(args[2]);
+    final double meanTrainsPerComm = Double.parseDouble(args[3]);
+    final int meanWindow = Integer.parseInt(args[4]);
+    final int meanCommsPerAddress = Integer.parseInt(args[5]);
+    final int meanWork = Integer.parseInt(args[6]);
+    final double configFraction = Double.parseDouble(args[7]);
+    final double pngFraction = Double.parseDouble(args[8]);
+    final double acceptingFraction = Double.parseDouble(args[9]);
     long fingerprint = 0;
     StopWatch timer = new StopWatch();
-    PacketSource pkt = new PacketSource(mean, numSources, experimentNumber);
+    PacketGenerator pktGen = new PacketGenerator(numAddressesLog, numTrainsLog, meanTrainSize, meanTrainsPerComm,
+    												meanWindow, meanCommsPerAddress, meanWork, configFraction, pngFraction, acceptingFraction);
     Fingerprint residue = new Fingerprint();
     
-    if( uniformFlag == true ) {
-      timer.startTimer();
-      for( int i = 0; i < numSources; i++ ) {
-        for( int j = 0; j < numPackets; j++ ) {
-          Packet tmp = pkt.getUniformPacket(i);
-          fingerprint += residue.getFingerprint(tmp.iterations, tmp.seed);
-        }
-      }
-      timer.stopTimer();
-    }
-    else {
-      timer.startTimer();
-      for( int i = 0; i < numSources; i++ ) {
-        for( int j = 0; j < numPackets; j++ ) {
-          Packet tmp = pkt.getExponentialPacket(i);
-          fingerprint += residue.getFingerprint(tmp.iterations, tmp.seed);
-        }
-      }
-      timer.stopTimer();
-    }
-    System.out.println(timer.getElapsedTime());
+    // TODO: implement logic for dispatching config and data packets
   }
 }
 
 
 class SerialQueueFirewall {
-  public static void main(String[] args) {
-    final int numPackets = Integer.parseInt(args[0]);    
-    final int numSources = Integer.parseInt(args[1]);
-    final long mean = Long.parseLong(args[2]);
-    final boolean uniformFlag = Boolean.parseBoolean(args[3]);
-    final int queueDepth = Integer.parseInt(args[4]);
-    final short experimentNumber = Short.parseShort(args[5]);
+  public static void main(String[] args) {    
+    final int numSources = Integer.parseInt(args[0]);
+
+    final int numAddressesLog = Integer.parseInt(args[1]);    
+    final int numTrainsLog = Integer.parseInt(args[2]);
+    final double meanTrainSize = Double.parseDouble(args[3]);
+    final double meanTrainsPerComm = Double.parseDouble(args[4]);
+    final int meanWindow = Integer.parseInt(args[5]);
+    final int meanCommsPerAddress = Integer.parseInt(args[6]);
+    final int meanWork = Integer.parseInt(args[7]);
+    final double configFraction = Double.parseDouble(args[8]);
+    final double pngFraction = Double.parseDouble(args[9]);
+    final double acceptingFraction = Double.parseDouble(args[10]);
+    
     StopWatch timer = new StopWatch();
-    PacketSource pkt = new PacketSource(mean, numSources, experimentNumber);
+    PacketGenerator pktGen = new PacketGenerator(numAddressesLog, numTrainsLog, meanTrainSize, meanTrainsPerComm,
+			meanWindow, meanCommsPerAddress, meanWork, configFraction, pngFraction, acceptingFraction);
+
     Fingerprint residue = new Fingerprint();
     // ...
     // allocate and initialize bank of numSources Lamport queues
     // each with depth queueDepth
     // they should throw FullException and EmptyException upon those conditions
     // ...
-    LamportQueue packetQueues[] = new LamportQueue[numSources];
+    AtomicQueue packetQueues[] = new AtomicQueue[numSources];
     
     for (int i = 0; i < numSources; i++) {
-    	packetQueues[i] = new LamportQueue<Packet>(queueDepth);
+    	packetQueues[i] = new AtomicQueue<Packet>();
     }
         
-    long fingerprint = 0;
-    timer.startTimer();
-    for( int i = 0; i < numSources; i++ ) {
-      for( int j = 0; j < numPackets; j++ ) {
-        Packet tmp;
-        if( uniformFlag == true )
-          tmp = pkt.getUniformPacket(i);
-        else
-          tmp = pkt.getExponentialPacket(i);
-        try {
-          // ...
-          // enqueue tmp in the ith Lamport queue
-          // ...
-        } catch (FullException e) {;}
-        try {
-          // ...
-          // dequeue the next packet from the ith Lamport queue into tmp
-          // ...
-        } catch (EmptyException e) {;}
-        fingerprint += residue.getFingerprint(tmp.iterations, tmp.seed);
-      }
-    }
-    timer.stopTimer();
-    System.out.println(timer.getElapsedTime());
+    // TODO: implement logic for dispatching config and data packets here
   }
 }
 
 
 class ParallelFirewall {
   public static void main(String[] args) {
-    final int numPackets = Integer.parseInt(args[0]);    
-    final int numSources = Integer.parseInt(args[1]);
-    final long mean = Long.parseLong(args[2]);
-    final boolean uniformFlag = Boolean.parseBoolean(args[3]);
-    final int queueDepth = Integer.parseInt(args[4]);
-    final short experimentNumber = Short.parseShort(args[5]);
+	final int numSources = Integer.parseInt(args[0]);
+
+    final int numAddressesLog = Integer.parseInt(args[1]);    
+    final int numTrainsLog = Integer.parseInt(args[2]);
+    final double meanTrainSize = Double.parseDouble(args[3]);
+    final double meanTrainsPerComm = Double.parseDouble(args[4]);
+    final int meanWindow = Integer.parseInt(args[5]);
+    final int meanCommsPerAddress = Integer.parseInt(args[6]);
+    final int meanWork = Integer.parseInt(args[7]);
+    final double configFraction = Double.parseDouble(args[8]);
+    final double pngFraction = Double.parseDouble(args[9]);
+	final double acceptingFraction = Double.parseDouble(args[10]);
     StopWatch timer = new StopWatch();
-    PacketSource pkt = new PacketSource(mean, numSources, experimentNumber);
+
+    PacketGenerator pktGen = new PacketGenerator(numAddressesLog, numTrainsLog, meanTrainSize, meanTrainsPerComm,
+			meanWindow, meanCommsPerAddress, meanWork, configFraction, pngFraction, acceptingFraction);
     // ...
     // Allocate and initialize bank of Lamport queues, as in SerialQueueFirewall
     // ...
-    LamportQueue packetQueues[] = new LamportQueue[numSources];
+    AtomicQueue packetQueues[] = new AtomicQueue[numSources];
     
     for (int i = 0; i < numSources; i++) {
-    	packetQueues[i] = new LamportQueue<Packet>(queueDepth);
+    	packetQueues[i] = new AtomicQueue<Packet>();
     }
     // Allocate and initialize a Dispatcher class implementing Runnable
     // and a corresponding Dispatcher Thread
