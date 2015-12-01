@@ -1,22 +1,44 @@
 class SerialFirewall {
   public static void main(String[] args) {
-    final int numAddressesLog = Integer.parseInt(args[0]);    
-    final int numTrainsLog = Integer.parseInt(args[1]);
-    final double meanTrainSize = Double.parseDouble(args[2]);
-    final double meanTrainsPerComm = Double.parseDouble(args[3]);
-    final int meanWindow = Integer.parseInt(args[4]);
-    final int meanCommsPerAddress = Integer.parseInt(args[5]);
-    final int meanWork = Integer.parseInt(args[6]);
-    final double configFraction = Double.parseDouble(args[7]);
-    final double pngFraction = Double.parseDouble(args[8]);
-    final double acceptingFraction = Double.parseDouble(args[9]);
+	final int numMilliseconds = Integer.parseInt(args[0]);
+    final int numSources = Integer.parseInt(args[1]);
+
+    final int numAddressesLog = Integer.parseInt(args[2]);    
+    final int numTrainsLog = Integer.parseInt(args[3]);
+    final double meanTrainSize = Double.parseDouble(args[4]);
+    final double meanTrainsPerComm = Double.parseDouble(args[5]);
+    final int meanWindow = Integer.parseInt(args[6]);
+    final int meanCommsPerAddress = Integer.parseInt(args[7]);
+    final int meanWork = Integer.parseInt(args[8]);
+    final double configFraction = Double.parseDouble(args[9]);
+    final double pngFraction = Double.parseDouble(args[10]);
+    final double acceptingFraction = Double.parseDouble(args[11]);
     long fingerprint = 0;
     StopWatch timer = new StopWatch();
     PacketGenerator pktGen = new PacketGenerator(numAddressesLog, numTrainsLog, meanTrainSize, meanTrainsPerComm,
     												meanWindow, meanCommsPerAddress, meanWork, configFraction, pngFraction, acceptingFraction);
     Fingerprint residue = new Fingerprint();
     
-    // TODO: implement logic for dispatching config and data packets
+    PaddedPrimitiveNonVolatile<Boolean> done = new PaddedPrimitiveNonVolatile<Boolean>(false);
+    
+    PaddedPrimitive<Boolean> memFence = new PaddedPrimitive<Boolean>(false);
+    SerialPacketWorker serialWorker = new SerialPacketWorker(done, pktGen, uniformFlag, numSources);
+    Thread workerThread = new Thread(serialWorker);
+    
+    workerThread.start();
+    timer.startTimer();
+    try {
+        Thread.sleep(numMilliseconds);
+      } catch (InterruptedException ignore) {;}
+      done.value = true;
+      memFence.value = true;
+      try {
+    	  workerThread.join();
+      } catch (InterruptedException ignore) {;}
+      final long totalCount = serialWorker.totalPackets;
+      System.out.println("count: " + totalCount);
+      System.out.println("time: " + timer.getElapsedTime());
+      System.out.println(totalCount/timer.getElapsedTime() + " pkts / ms");
   }
 }
 
@@ -40,6 +62,7 @@ class SerialQueueFirewall {
     StopWatch timer = new StopWatch();
     PacketGenerator pktGen = new PacketGenerator(numAddressesLog, numTrainsLog, meanTrainSize, meanTrainsPerComm,
 			meanWindow, meanCommsPerAddress, meanWork, configFraction, pngFraction, acceptingFraction);
+    
 
     Fingerprint residue = new Fingerprint();
     // ...
