@@ -2,19 +2,26 @@
 class SerialPacket {
   public static void main(String[] args) {
 
-    final int numMilliseconds = Integer.parseInt(args[0]);    
-    final int numSources = Integer.parseInt(args[1]);
-    final long mean = Long.parseLong(args[2]);
-    final boolean uniformFlag = Boolean.parseBoolean(args[3]);
-    final short experimentNumber = Short.parseShort(args[4]);
+	  final int numAddressesLog = Integer.parseInt(args[0]);    
+	  final int numTrainsLog = Integer.parseInt(args[1]);
+	  final double meanTrainSize = Double.parseDouble(args[2]);
+	  final double meanTrainsPerComm = Double.parseDouble(args[3]);
+	  final int meanWindow = Integer.parseInt(args[4]);
+	  final int meanCommsPerAddress = Integer.parseInt(args[5]);
+	  final int meanWork = Integer.parseInt(args[6]);
+	  final double configFraction = Double.parseDouble(args[7]);
+	  final double pngFraction = Double.parseDouble(args[8]);
+	  final double acceptingFraction = Double.parseDouble(args[9]);
 
     @SuppressWarnings({"unchecked"})
     StopWatch timer = new StopWatch();
-    PacketSource pkt = new PacketSource(mean, numSources, experimentNumber);
+    PacketGenerator pktGen = new PacketGenerator(numAddressesLog, numTrainsLog, meanTrainSize, meanTrainsPerComm,
+			meanWindow, meanCommsPerAddress, meanWork, configFraction, pngFraction, acceptingFraction);
+
     PaddedPrimitiveNonVolatile<Boolean> done = new PaddedPrimitiveNonVolatile<Boolean>(false);
     PaddedPrimitive<Boolean> memFence = new PaddedPrimitive<Boolean>(false);
         
-    SerialPacketWorker workerData = new SerialPacketWorker(done, pkt, uniformFlag, numSources);
+    SerialPacketWorker workerData = new SerialPacketWorker(done, pktGen, uniformFlag, numSources);
     Thread workerThread = new Thread(workerData);
     
     workerThread.start();
