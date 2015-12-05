@@ -21,7 +21,7 @@ class SerialList<T,K> implements BucketList<T,K> {
     this.size = 0;
   }
   public SerialList(K key, T item) {
-    this.head = new SerialList<T,K>.Iterator<T,K>(key,item,null);
+    this.head = this.new Iterator<T,K>(key,item,null);
     this.size = 1;
   }
   public Iterator<T,K> getHead() {
@@ -74,13 +74,14 @@ class SerialList<T,K> implements BucketList<T,K> {
     }
     else {
       @SuppressWarnings("unchecked")      
-      SerialList<T,K>.Iterator<T,K> firstItem = new SerialList<T,K>.Iterator<T,K>(key, item, head);
+      SerialList<T,K>.Iterator<T,K> firstItem = this.new Iterator<T,K>(key,item,head);
+
       head = firstItem;
       size++;
     }
   }
   public void addNoCheck(K key, T item) {
-    SerialList<T,K>.Iterator<T,K> firstItem = new SerialList<T,K>.Iterator<T,K>(key, item, head);
+    SerialList<T,K>.Iterator<T,K> firstItem = this.new Iterator<T,K>(key,item,head);
     head = firstItem;
     size++;
   }
