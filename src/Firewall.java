@@ -20,9 +20,10 @@ class SerialFirewall {
     Fingerprint residue = new Fingerprint();
     
     PaddedPrimitiveNonVolatile<Boolean> done = new PaddedPrimitiveNonVolatile<Boolean>(false);
-    
     PaddedPrimitive<Boolean> memFence = new PaddedPrimitive<Boolean>(false);
-    SerialPacketWorker serialWorker = new SerialPacketWorker(done, pktGen, uniformFlag, numSources);
+    
+    // initialize dispatcher here
+    SerialPacketWorker serialWorker = new SerialPacketWorker(done, pktGen, numSources);
     Thread workerThread = new Thread(serialWorker);
     
     workerThread.start();

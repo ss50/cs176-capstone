@@ -9,15 +9,12 @@ class SerialPacketWorker implements PacketWorker {
   long fingerprint = 0;
   long totalPackets = 0;
   final int numSources;
-  final boolean uniformBool;
   public SerialPacketWorker(
     PaddedPrimitiveNonVolatile<Boolean> done, 
     PacketGenerator pkt,
-    boolean uniformBool,
     int numSources) {
     this.done = done;
     this.pkt = pkt;
-    this.uniformBool = uniformBool;
     this.numSources = numSources;
   }
   
