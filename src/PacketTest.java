@@ -2,16 +2,19 @@
 class SerialPacket {
   public static void main(String[] args) {
 
-	  final int numAddressesLog = Integer.parseInt(args[0]);    
-	  final int numTrainsLog = Integer.parseInt(args[1]);
-	  final double meanTrainSize = Double.parseDouble(args[2]);
-	  final double meanTrainsPerComm = Double.parseDouble(args[3]);
-	  final int meanWindow = Integer.parseInt(args[4]);
-	  final int meanCommsPerAddress = Integer.parseInt(args[5]);
-	  final int meanWork = Integer.parseInt(args[6]);
-	  final double configFraction = Double.parseDouble(args[7]);
-	  final double pngFraction = Double.parseDouble(args[8]);
-	  final double acceptingFraction = Double.parseDouble(args[9]);
+	  final int numMilliseconds = Integer.parseInt(args[0]);
+	  final int numSources = Integer.parseInt(args[1]);
+
+	  final int numAddressesLog = Integer.parseInt(args[2]);    
+	  final int numTrainsLog = Integer.parseInt(args[3]);
+	  final double meanTrainSize = Double.parseDouble(args[4]);
+	  final double meanTrainsPerComm = Double.parseDouble(args[5]);
+	  final int meanWindow = Integer.parseInt(args[6]);
+	  final int meanCommsPerAddress = Integer.parseInt(args[7]);
+	  final int meanWork = Integer.parseInt(args[8]);
+	  final double configFraction = Double.parseDouble(args[9]);
+	  final double pngFraction = Double.parseDouble(args[10]);
+	  final double acceptingFraction = Double.parseDouble(args[11]);
 
     @SuppressWarnings({"unchecked"})
     StopWatch timer = new StopWatch();
@@ -21,7 +24,7 @@ class SerialPacket {
     PaddedPrimitiveNonVolatile<Boolean> done = new PaddedPrimitiveNonVolatile<Boolean>(false);
     PaddedPrimitive<Boolean> memFence = new PaddedPrimitive<Boolean>(false);
         
-    SerialPacketWorker workerData = new SerialPacketWorker(done, pktGen, uniformFlag, numSources);
+    SerialPacketWorker workerData = new SerialPacketWorker(done, pktGen, numSources);
     Thread workerThread = new Thread(workerData);
     
     workerThread.start();
@@ -45,21 +48,32 @@ class SerialPacket {
 class ParallelPacket {
   public static void main(String[] args) {
 
-    final int numMilliseconds = Integer.parseInt(args[0]);    
-    final int numSources = Integer.parseInt(args[1]);
-    final long mean = Long.parseLong(args[2]);
-    final boolean uniformFlag = Boolean.parseBoolean(args[3]);
-    final short experimentNumber = Short.parseShort(args[4]);
-    final int queueDepth = Integer.parseInt(args[5]);
-    final int lockType = Integer.parseInt(args[6]);
-    final short strategy = Short.parseShort(args[7]);
+	  final int numMilliseconds = Integer.parseInt(args[0]);
+	  final int numSources = Integer.parseInt(args[1]);
+
+	  final int numAddressesLog = Integer.parseInt(args[2]);    
+	  final int numTrainsLog = Integer.parseInt(args[3]);
+	  final double meanTrainSize = Double.parseDouble(args[4]);
+	  final double meanTrainsPerComm = Double.parseDouble(args[5]);
+	  final int meanWindow = Integer.parseInt(args[6]);
+	  final int meanCommsPerAddress = Integer.parseInt(args[7]);
+	  final int meanWork = Integer.parseInt(args[8]);
+	  final double configFraction = Double.parseDouble(args[9]);
+	  final double pngFraction = Double.parseDouble(args[10]);
+	  final double acceptingFraction = Double.parseDouble(args[11]);
 
     @SuppressWarnings({"unchecked"})
     //
     // Allocate and initialize your Lamport queues
     //
     StopWatch timer = new StopWatch();
-    PacketSource pkt = new PacketSource(mean, numSources, experimentNumber);
+    PacketGenerator pktGen = new PacketGenerator(numAddressesLog, numTrainsLog, meanTrainSize, meanTrainsPerComm,
+			meanWindow, meanCommsPerAddress, meanWork, configFraction, pngFraction, acceptingFraction);
+    
+    
+    // TODO: change this to ParallelPacketWorker once the class is implemented
+    PaddedPrimitiveNonVolatile<Boolean> done = new PaddedPrimitiveNonVolatile<Boolean>(false);
+    SerialPacketWorker workerData = new SerialPacketWorker(done, pktGen, numSources);
     // 
     // Allocate and initialize locks and any signals used to marshal threads (eg. done signals)
     // 
@@ -87,7 +101,9 @@ class ParallelPacket {
     //
     // call .join() for each Worker
     timer.stopTimer();
-    final long totalCount = dispatchData.totalPackets;
+    
+    // TODO: get total packets from Dispatcher instead
+    final long totalCount = workerData.totalPackets;
     System.out.println("count: " + totalCount);
     System.out.println("time: " + timer.getElapsedTime());
     System.out.println(totalCount/timer.getElapsedTime() + " pkts / ms");
