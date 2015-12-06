@@ -6,8 +6,10 @@ public class DataPacketHandler implements Runnable {
 	private SyncHashMap syncHashMap;
 	private PNGList pngList;
 	private DList dlist;
+	private int numAddresses;
 
-	public DataPacketHandler() {
+	public DataPacketHandler(int numAddresses) {
+		this.numAddresses = numAddresses;
 	}
 
 	@Override

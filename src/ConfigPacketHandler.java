@@ -7,9 +7,10 @@ public class ConfigPacketHandler implements Runnable{
 	private SyncHashMap syncHashMap;
 	private PNGList pngList;
 	private DList dlist;
+	private int numAddresses;
 	
-	public ConfigPacketHandler() {
-		
+	public ConfigPacketHandler(int numAddresses) {
+		this.numAddresses = numAddresses;
 	}
 
 	@Override
