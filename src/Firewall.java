@@ -105,7 +105,7 @@ class ParallelFirewall {
     // Allocate and initialize bank of Lamport queues, as in SerialQueueFirewall
     // ...
     AtomicQueue packetQueues[] = new AtomicQueue[numSources];
-    
+
     for (int i = 0; i < numSources; i++) {
     	packetQueues[i] = new AtomicQueue<Packet>();
     }
