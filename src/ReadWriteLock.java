@@ -6,6 +6,9 @@ public class ReadWriteLock {
 	
 	public ReadWriteLock(int numLocks) {
 		locks = new ReentrantReadWriteLock[numLocks];
+		for (int i = 0; i < locks.length; i++) {
+			locks[i] = new ReentrantReadWriteLock();
+		}
 	}
 	
 	public void lockRead(int address) {

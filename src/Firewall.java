@@ -71,6 +71,7 @@ class SerialQueueFirewall {
     // each with depth queueDepth
     // they should throw FullException and EmptyException upon those conditions
     // ...
+    int totalPackets = (int) Math.pow(2, numAddressesLog);
     AtomicQueue packetQueues[] = new AtomicQueue[numSources];
     
     for (int i = 0; i < numSources; i++) {
@@ -101,32 +102,41 @@ class ParallelFirewall {
 
     PacketGenerator pktGen = new PacketGenerator(numAddressesLog, numTrainsLog, meanTrainSize, meanTrainsPerComm,
 			meanWindow, meanCommsPerAddress, meanWork, configFraction, pngFraction, acceptingFraction);
+    PaddedPrimitiveNonVolatile<Boolean> done = new PaddedPrimitiveNonVolatile<Boolean>(false);
+    PaddedPrimitive<Boolean> memFence = new PaddedPrimitive<Boolean>(false);
+    int totalPackets = (int) Math.pow(2, numAddressesLog);
     // ...
     // Allocate and initialize bank of Lamport queues, as in SerialQueueFirewall
     // ...
-    AtomicQueue packetQueues[] = new AtomicQueue[numSources];
-
-    for (int i = 0; i < numSources; i++) {
-    	packetQueues[i] = new AtomicQueue<Packet>();
-    }
+    
     // Allocate and initialize a Dispatcher class implementing Runnable
     // and a corresponding Dispatcher Thread
     // ...
+    Dispatcher dispatcher = new Dispatcher(done, memFence, totalPackets, pktGen);
+    Thread dispatcherThread = new Thread(dispatcher);
     // Allocate and initialize an array of Worker classes, implementing Runnable
     // and the corresponding Worker Threads
     // ...
-    DataPacketHandler a = new DataPacketHandler();
+    
     // Call start() for each worker
     // ...
     timer.startTimer();
     // ...
-  
+    dispatcherThread.start();
     // Call start() for the Dispatcher thread
     // ...
     // Call join() for Dispatcher thread
     // ...
     // Call join() for each Worker thread
     // ...
+    try {
+        Thread.sleep(numMilliseconds);
+      } catch (InterruptedException ignore) {;}
+      done.value = true;
+      memFence.value = true;
+    try {
+    	dispatcherThread.join();
+    } catch (InterruptedException e) {;}
     timer.stopTimer();
     System.out.println(timer.getElapsedTime());
   }

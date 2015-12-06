@@ -2,31 +2,36 @@ import java.util.concurrent.atomic.*;
 
 public class Dispatcher implements Runnable {
 	
-	PaddedPrimitiveNonVolatile<Boolean> done = new PaddedPrimitiveNonVolatile<Boolean>(false);
-	PaddedPrimitive<Boolean> memFence = new PaddedPrimitive<Boolean>(false);
+	PaddedPrimitiveNonVolatile<Boolean> done;
+	PaddedPrimitive<Boolean> memFence;
 	private PacketGenerator pktGen;
-	private int numSources;
+	private int numAddresses;
+	private ConfigPacketHandler configHandler;
+	private DataPacketHandler dataHandler;
 	
-	public Dispatcher(PaddedPrimitiveNonVolatile<Boolean> done, PaddedPrimitive<Boolean> memFence,
-			int numSources, PacketGenerator gen) {
+	public Dispatcher(PaddedPrimitiveNonVolatile<Boolean> done, PaddedPrimitive<Boolean> memFence, int numAddresses, PacketGenerator gen) {
 		this.done = done;
 		this.memFence = memFence;
-		this.numSources = numSources;
+		this.numAddresses = numAddresses;
 		this.pktGen = gen;
+		configHandler = new ConfigPacketHandler(numAddresses);
+		dataHandler = new DataPacketHandler(numAddresses);
 	}
 
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
 		while (!done.value) {
-			for (int i = 0; i < numSources; i++) {
+			for (int i = 0; i < numAddresses; i++) {
 				Packet packet = pktGen.getPacket();
 				switch (packet.type) {
 					case ConfigPacket:
 						// send to config thread pool
+						configHandler.handlePacket(packet);
 						break;
 					case DataPacket:
 						// send to data thread pool
+						dataHandler.handlePacket(packet);
 						break;
 				}
 			}
