@@ -1,45 +1,46 @@
 class SerialFirewall {
   public static void main(String[] args) {
-	final int numMilliseconds = Integer.parseInt(args[0]);
-    final int numSources = Integer.parseInt(args[1]);
-
-    final int numAddressesLog = Integer.parseInt(args[2]);    
-    final int numTrainsLog = Integer.parseInt(args[3]);
-    final double meanTrainSize = Double.parseDouble(args[4]);
-    final double meanTrainsPerComm = Double.parseDouble(args[5]);
-    final int meanWindow = Integer.parseInt(args[6]);
-    final int meanCommsPerAddress = Integer.parseInt(args[7]);
-    final int meanWork = Integer.parseInt(args[8]);
-    final double configFraction = Double.parseDouble(args[9]);
-    final double pngFraction = Double.parseDouble(args[10]);
-    final double acceptingFraction = Double.parseDouble(args[11]);
-    long fingerprint = 0;
-    StopWatch timer = new StopWatch();
-    PacketGenerator pktGen = new PacketGenerator(numAddressesLog, numTrainsLog, meanTrainSize, meanTrainsPerComm,
-    												meanWindow, meanCommsPerAddress, meanWork, configFraction, pngFraction, acceptingFraction);
-    Fingerprint residue = new Fingerprint();
-    
-    PaddedPrimitiveNonVolatile<Boolean> done = new PaddedPrimitiveNonVolatile<Boolean>(false);
-    PaddedPrimitive<Boolean> memFence = new PaddedPrimitive<Boolean>(false);
-    
-    // initialize dispatcher here
-    SerialPacketWorker serialWorker = new SerialPacketWorker(done, pktGen, numSources);
-    Thread workerThread = new Thread(serialWorker);
-    
-    workerThread.start();
-    timer.startTimer();
-    try {
+		final int numMilliseconds = Integer.parseInt(args[0]);
+	    final int numSources = Integer.parseInt(args[1]);
+	
+	    final int numAddressesLog = Integer.parseInt(args[2]);    
+	    final int numTrainsLog = Integer.parseInt(args[3]);
+	    final double meanTrainSize = Double.parseDouble(args[4]);
+	    final double meanTrainsPerComm = Double.parseDouble(args[5]);
+	    final int meanWindow = Integer.parseInt(args[6]);
+	    final int meanCommsPerAddress = Integer.parseInt(args[7]);
+	    final int meanWork = Integer.parseInt(args[8]);
+	    final double configFraction = Double.parseDouble(args[9]);
+	    final double pngFraction = Double.parseDouble(args[10]);
+	    final double acceptingFraction = Double.parseDouble(args[11]);
+	    long fingerprint = 0;
+	    StopWatch timer = new StopWatch();
+	    PacketGenerator pktGen = new PacketGenerator(numAddressesLog, numTrainsLog, meanTrainSize, meanTrainsPerComm,
+	    												meanWindow, meanCommsPerAddress, meanWork, configFraction, pngFraction, acceptingFraction);
+	    Fingerprint residue = new Fingerprint();
+	    int totalProcessedPackets = (int) Math.pow(Math.pow(2, numAddressesLog), 1.5);
+	    
+	    PaddedPrimitiveNonVolatile<Boolean> done = new PaddedPrimitiveNonVolatile<Boolean>(false);
+	    PaddedPrimitive<Boolean> memFence = new PaddedPrimitive<Boolean>(false);
+	    
+	    // initialize dispatcher here
+	    SerialPacketWorker serialWorker = new SerialPacketWorker(done, pktGen, numSources);
+	    Thread workerThread = new Thread(serialWorker);
+	    
+    	workerThread.start();
+    	timer.startTimer();
+    	try {
         Thread.sleep(numMilliseconds);
-      } catch (InterruptedException ignore) {;}
-      done.value = true;
-      memFence.value = true;
-      try {
-    	  workerThread.join();
-      } catch (InterruptedException ignore) {;}
-      final long totalCount = serialWorker.totalPackets;
-      System.out.println("count: " + totalCount);
-      System.out.println("time: " + timer.getElapsedTime());
-      System.out.println(totalCount/timer.getElapsedTime() + " pkts / ms");
+    	} catch (InterruptedException ignore) {;}
+	      done.value = true;
+	      memFence.value = true;
+	      try {
+	    	  workerThread.join();
+	      } catch (InterruptedException ignore) {;}
+	      final long totalCount = serialWorker.totalPackets;
+	      System.out.println("count: " + totalCount);
+	      System.out.println("time: " + timer.getElapsedTime());
+	      System.out.println(totalCount/timer.getElapsedTime() + " pkts / ms");
   }
 }
 
@@ -105,12 +106,19 @@ class ParallelFirewall {
     // Allocate and initialize bank of Lamport queues, as in SerialQueueFirewall
     // ...
     AtomicQueue packetQueues[] = new AtomicQueue[numSources];
-
+    PaddedPrimitiveNonVolatile<Boolean> done = new PaddedPrimitiveNonVolatile<Boolean>(false);
+    PaddedPrimitive<Boolean> memFence = new PaddedPrimitive<Boolean>(false);
     for (int i = 0; i < numSources; i++) {
     	packetQueues[i] = new AtomicQueue<Packet>();
     }
+    
+    
     // Allocate and initialize a Dispatcher class implementing Runnable
     // and a corresponding Dispatcher Thread
+    
+    @SuppressWarnings("unchecked")
+	Dispatcher dispatcher = new Dispatcher(done, memFence, numSources, pktGen);
+    Thread dispatcherThread = new Thread(dispatcher);
     // ...
     // Allocate and initialize an array of Worker classes, implementing Runnable
     // and the corresponding Worker Threads
@@ -120,9 +128,18 @@ class ParallelFirewall {
     timer.startTimer();
     // ...
     // Call start() for the Dispatcher thread
+    dispatcherThread.start();
+    try {
+        Thread.sleep(numMilliseconds);
+    } catch (InterruptedException ignore) {;}
+    done.value = true;
+    memFence.value = true;
     // ...
     // Call join() for Dispatcher thread
-    // ...
+    try {
+    	dispatcherThread.join();
+    } catch (InterruptedException e) {}
+    
     // Call join() for each Worker thread
     // ...
     timer.stopTimer();
