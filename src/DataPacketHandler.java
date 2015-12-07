@@ -42,9 +42,7 @@ public class DataPacketHandler implements Runnable {
 				long checksum = residue.getFingerprint(body.iterations, body.seed);
 				HistogramGenerator.addFingerprintSighting(checksum);
 			}
-			cf.operation();
-			
-			
+			cf.operation();	
 					
 		}
 
