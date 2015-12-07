@@ -11,20 +11,24 @@ public class ReadWriteLock {
 		}
 	}
 	
+	public int addressToHashIndex(int address){
+		return address % locks.length;
+	}
+	
 	public void lockRead(int address) {
-		locks[address].readLock().lock();
+		locks[addressToHashIndex(address)].readLock().lock();
 	}
 	
 	public void unlockRead(int address) {
-		locks[address].readLock().unlock();
+		locks[addressToHashIndex(address)].readLock().unlock();
 	}
 	
 	public void lockWrite(int address) {
-		locks[address].writeLock().lock();
+		locks[addressToHashIndex(address)].writeLock().lock();
 	}
 	
 	public void unlockWrite(int address) {
-		locks[address].writeLock().unlock();
+		locks[addressToHashIndex(address)].writeLock().unlock();
 	}
 
 }
