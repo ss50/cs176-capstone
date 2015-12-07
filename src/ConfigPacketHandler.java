@@ -4,7 +4,7 @@ import java.util.concurrent.Executors;
 
 public class ConfigPacketHandler implements Runnable{
 	private final ExecutorService threadPool = Executors.newCachedThreadPool();
-	private SyncHashMap syncHashMap;
+	private ReadWriteLock lockArray;
 	private PNGList pngList;
 	private DList dlist;
 	private int numAddresses;
