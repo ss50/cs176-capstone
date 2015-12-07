@@ -24,14 +24,22 @@ public class DataPacketHandler implements Runnable {
 
 	private class DataPacketThread implements Runnable {
 		private Packet p;
+		private Fingerprint residue;
 
 		public DataPacketThread(Packet p) {
-
+			residue = new Fingerprint();
+			this.p = p;
 		}
 
 		@Override
 		public void run() {
-
+			Header header = p.header;
+			Body body = p.body;
+			if (pngList.getAddressPermission(header.source) /* and it is in the list of source address */) {
+				long checksum = residue.getFingerprint(body.iterations, body.seed);
+				// add checksum to histogram
+			}
+					
 		}
 
 	}

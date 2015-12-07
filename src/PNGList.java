@@ -11,6 +11,10 @@ public class PNGList {
 		hashMap.put(sourceAddress, isPNG);
 	}
 	
+	public boolean getAddressPermission(int sourceAddress) {
+		return hashMap.get(sourceAddress);
+	}
+	
 	public boolean isPNG(int sourceAddress){
 		return hashMap.contains(sourceAddress) ? hashMap.get(sourceAddress) : false;
 	}

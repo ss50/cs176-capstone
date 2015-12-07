@@ -9,8 +9,8 @@ public class ConfigPacketHandler implements Runnable{
 	private DList dlist;
 	private int numAddresses;
 	
-	public ConfigPacketHandler(int numAddresses) {
-		this.numAddresses = numAddresses;
+	public ConfigPacketHandler(int numAddressesLog) {
+		this.numAddresses = (int) Math.pow(2, numAddresses);
 	}
 
 	@Override
@@ -21,21 +21,32 @@ public class ConfigPacketHandler implements Runnable{
 	}
 
 	public void handlePacket(Packet p) {
-		DataPacketThread d = new DataPacketThread(p);
+		ConfigPacketThread d = new ConfigPacketThread(p);
 		threadPool.execute(d);
 	}
 	
 	
-	private class DataPacketThread implements Runnable {
+	private class ConfigPacketThread implements Runnable {
 		private Packet p;
+		private int address;
+		private int addressBegin;
+		private int addressEnd;
+		private boolean acceptingRange;
+		private boolean personaNonGrata;
 		
-		private DataPacketThread(Packet p) {
-			
+		private ConfigPacketThread(Packet p) {
+			Config config = p.config;
+			address = config.address;
+			addressBegin = config.addressBegin;
+			addressEnd = config.addressEnd;
+			acceptingRange = config.acceptingRange;
+			personaNonGrata = config.personaNonGrata;
 		}
 		
 		@Override
 		public void run() {
-			
+			pngList.setAddress(address, personaNonGrata);
+			dlist.setAcceptingSources(address, addressBegin, addressEnd, acceptingRange);
 		}
 
 	}

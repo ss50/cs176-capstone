@@ -105,7 +105,6 @@ class ParallelFirewall {
     PaddedPrimitiveNonVolatile<Boolean> done = new PaddedPrimitiveNonVolatile<Boolean>(false);
     PaddedPrimitiveNonVolatile<Integer> numInFlight = new PaddedPrimitiveNonVolatile<Integer>(0);
     PaddedPrimitive<Boolean> memFence = new PaddedPrimitive<Boolean>(false);
-    int totalPackets = (int) Math.pow(2, numAddressesLog);
     // ...
     // Allocate and initialize bank of Lamport queues, as in SerialQueueFirewall
     // ...
@@ -113,7 +112,7 @@ class ParallelFirewall {
     // Allocate and initialize a Dispatcher class implementing Runnable
     // and a corresponding Dispatcher Thread
     // ...
-    Dispatcher dispatcher = new Dispatcher(done,numInFlight, memFence, totalPackets, pktGen);
+    Dispatcher dispatcher = new Dispatcher(done,numInFlight, memFence, numAddressesLog, pktGen);
     Thread dispatcherThread = new Thread(dispatcher);
     // Allocate and initialize an array of Worker classes, implementing Runnable
     // and the corresponding Worker Threads

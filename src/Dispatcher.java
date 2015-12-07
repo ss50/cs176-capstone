@@ -11,11 +11,11 @@ public class Dispatcher implements Runnable {
 	private DataPacketHandler dataHandler;
 	private int numInFlight = 0;
 	
-	public Dispatcher(PaddedPrimitiveNonVolatile<Boolean> done, PaddedPrimitiveNonVolatile<Integer> numInFlight, PaddedPrimitive<Boolean> memFence, int numAddresses, PacketGenerator gen) {
+	public Dispatcher(PaddedPrimitiveNonVolatile<Boolean> done, PaddedPrimitiveNonVolatile<Integer> numInFlight, PaddedPrimitive<Boolean> memFence, int numAddressesLog, PacketGenerator gen) {
 		this.done = done;
 		this.inFlight = numInFlight;
 		this.memFence = memFence;
-		this.numAddresses = numAddresses;
+		this.numAddresses = (int) Math.pow(2, numAddressesLog);
 		this.pktGen = gen;
 		configHandler = new ConfigPacketHandler(numAddresses);
 		dataHandler = new DataPacketHandler(numAddresses);
