@@ -23,6 +23,7 @@ public class Dispatcher implements Runnable {
 		dataHandler = new DataPacketHandler(numAddresses, this.accessControl);
 	}
 
+	
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
@@ -32,15 +33,17 @@ public class Dispatcher implements Runnable {
 				// only 256 packets can be in flight at once
 				while (numInFlight.get() > 256 && !done.value) {}
 				numInFlight.addAndGet(1);
+				// decrements the number of packets in flight
+				CallbackFunction callbackFunc = () -> this.numInFlight.decrementAndGet(); 
 //				inFlight.value++;
 				switch (packet.type) {
 				case ConfigPacket:
 					// send to config thread pool
-					configHandler.handlePacket(packet);
+					configHandler.handlePacket(packet,callbackFunc);
 					break;
 				case DataPacket:
 					// send to data thread pool
-					dataHandler.handlePacket(packet);
+					dataHandler.handlePacket(packet,callbackFunc);
 					break;
 				}
 			}

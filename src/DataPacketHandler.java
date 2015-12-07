@@ -18,17 +18,20 @@ public class DataPacketHandler implements Runnable {
 		}
 	}
 
-	public void handlePacket(Packet p) {
-
+	public void handlePacket(Packet p, CallbackFunction cf) {
+		DataPacketThread d = new DataPacketThread(p,cf);
+		threadPool.execute(d);
 	}
 
 	private class DataPacketThread implements Runnable {
 		private Packet p;
 		private Fingerprint residue;
+		private CallbackFunction cf;
 
-		public DataPacketThread(Packet p) {
+		public DataPacketThread(Packet p, CallbackFunction cf) {
 			residue = new Fingerprint();
 			this.p = p;
+			this.cf = cf;
 		}
 
 		@Override
@@ -39,6 +42,9 @@ public class DataPacketHandler implements Runnable {
 				long checksum = residue.getFingerprint(body.iterations, body.seed);
 				// add checksum to histogram
 			}
+			cf.operation();
+			
+			
 					
 		}
 

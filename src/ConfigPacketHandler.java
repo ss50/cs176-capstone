@@ -20,8 +20,8 @@ public class ConfigPacketHandler implements Runnable{
 		}
 	}
 
-	public void handlePacket(Packet p) {
-		ConfigPacketThread d = new ConfigPacketThread(p);
+	public void handlePacket(Packet p, CallbackFunction cf) {
+		ConfigPacketThread d = new ConfigPacketThread(p,cf);
 		threadPool.execute(d);
 	}
 	
@@ -33,20 +33,23 @@ public class ConfigPacketHandler implements Runnable{
 		private int addressEnd;
 		private boolean acceptingRange;
 		private boolean personaNonGrata;
+		private CallbackFunction cf;
 		
-		private ConfigPacketThread(Packet p) {
+		private ConfigPacketThread(Packet p, CallbackFunction cf) {
 			Config config = p.config;
 			address = config.address;
 			addressBegin = config.addressBegin;
 			addressEnd = config.addressEnd;
 			acceptingRange = config.acceptingRange;
 			personaNonGrata = config.personaNonGrata;
+			this.cf = cf;
 		}
 		
 		@Override
 		public void run() {
 			accessControl.setAddress(address, personaNonGrata);
 			accessControl.setAcceptingSources(address, addressBegin, addressEnd, acceptingRange);
+			cf.operation();
 		}
 
 	}
