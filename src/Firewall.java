@@ -112,6 +112,22 @@ class ParallelFirewall {
     // Allocate and initialize a Dispatcher class implementing Runnable
     // and a corresponding Dispatcher Thread
     // ...
+
+    Fingerprint residue = new Fingerprint();
+    int totalPackets = (int) Math.pow(2, numAddressesLog);
+    AtomicQueue packetQueues[] = new AtomicQueue[numSources];
+    
+    for (int i = 0; i < numSources; i++) {
+    	packetQueues[i] = new AtomicQueue<Packet>();
+    }
+
+
+    
+    
+    
+    
+    
+    
     AccessControl accessControl = new AccessControl();
     Dispatcher dispatcher = new Dispatcher(done,numInFlight, memFence, accessControl, numAddressesLog, pktGen);
     Thread dispatcherThread = new Thread(dispatcher);
