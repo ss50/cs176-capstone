@@ -10,18 +10,17 @@ public class Dispatcher implements Runnable {
 	private ConfigPacketHandler configHandler;
 	private DataPacketHandler dataHandler;
 	private AtomicInteger numInFlight = new AtomicInteger(0);
+	private AccessControl accessControl;
 
-	public Dispatcher(PaddedPrimitiveNonVolatile<Boolean> done,
-			PaddedPrimitiveNonVolatile<Integer> numInFlight,
-			PaddedPrimitive<Boolean> memFence, int numAddressesLog,
-			PacketGenerator gen) {
+	public Dispatcher(PaddedPrimitiveNonVolatile<Boolean> done, PaddedPrimitiveNonVolatile<Integer> numInFlight, PaddedPrimitive<Boolean> memFence, AccessControl accessControl, int numAddressesLog, PacketGenerator gen) {
 		this.done = done;
 //		this.inFlight = numInFlight;
 		this.memFence = memFence;
 		this.numAddresses = (int) Math.pow(2, numAddressesLog);
 		this.pktGen = gen;
-		configHandler = new ConfigPacketHandler(numAddresses);
-		dataHandler = new DataPacketHandler(numAddresses);
+		this.accessControl = accessControl;
+		configHandler = new ConfigPacketHandler(numAddresses, this.accessControl);
+		dataHandler = new DataPacketHandler(numAddresses, this.accessControl);
 	}
 
 	@Override

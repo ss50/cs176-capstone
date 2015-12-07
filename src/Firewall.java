@@ -112,7 +112,8 @@ class ParallelFirewall {
     // Allocate and initialize a Dispatcher class implementing Runnable
     // and a corresponding Dispatcher Thread
     // ...
-    Dispatcher dispatcher = new Dispatcher(done,numInFlight, memFence, numAddressesLog, pktGen);
+    AccessControl accessControl = new AccessControl();
+    Dispatcher dispatcher = new Dispatcher(done,numInFlight, memFence, accessControl, numAddressesLog, pktGen);
     Thread dispatcherThread = new Thread(dispatcher);
     // Allocate and initialize an array of Worker classes, implementing Runnable
     // and the corresponding Worker Threads

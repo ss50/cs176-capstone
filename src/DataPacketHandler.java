@@ -3,13 +3,13 @@ import java.util.concurrent.Executors;
 
 public class DataPacketHandler implements Runnable {
 	private final ExecutorService threadPool = Executors.newCachedThreadPool();
-	private PNGList pngList;
-	private DList dlist;
 	private int numAddresses;
 	private ReadWriteLock lockArray;
+	private AccessControl accessControl;
 
-	public DataPacketHandler(int numAddresses) {
+	public DataPacketHandler(int numAddresses, AccessControl ac) {
 		this.numAddresses = numAddresses;
+		this.accessControl = ac;
 	}
 
 	@Override
@@ -35,7 +35,7 @@ public class DataPacketHandler implements Runnable {
 		public void run() {
 			Header header = p.header;
 			Body body = p.body;
-			if (pngList.getAddressPermission(header.source) /* and it is in the list of source address */) {
+			if (accessControl.getAddressPermission(header.source) /* and it is in the list of source address */) {
 				long checksum = residue.getFingerprint(body.iterations, body.seed);
 				// add checksum to histogram
 			}

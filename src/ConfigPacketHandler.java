@@ -5,12 +5,12 @@ import java.util.concurrent.Executors;
 public class ConfigPacketHandler implements Runnable{
 	private final ExecutorService threadPool = Executors.newCachedThreadPool();
 	private ReadWriteLock lockArray;
-	private PNGList pngList;
-	private DList dlist;
 	private int numAddresses;
+	private AccessControl accessControl;
 	
-	public ConfigPacketHandler(int numAddressesLog) {
+	public ConfigPacketHandler(int numAddressesLog, AccessControl ac) {
 		this.numAddresses = (int) Math.pow(2, numAddresses);
+		this.accessControl = ac;
 	}
 
 	@Override
@@ -45,8 +45,8 @@ public class ConfigPacketHandler implements Runnable{
 		
 		@Override
 		public void run() {
-			pngList.setAddress(address, personaNonGrata);
-			dlist.setAcceptingSources(address, addressBegin, addressEnd, acceptingRange);
+			accessControl.setAddress(address, personaNonGrata);
+			accessControl.setAcceptingSources(address, addressBegin, addressEnd, acceptingRange);
 		}
 
 	}
