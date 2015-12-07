@@ -37,7 +37,7 @@ public class DataPacketHandler implements Runnable {
 			Body body = p.body;
 			if (accessControl.getAddressPermission(header.source) /* and it is in the list of source address */) {
 				long checksum = residue.getFingerprint(body.iterations, body.seed);
-				// add checksum to histogram
+				HistogramGenerator.addFingerprintSighting(checksum);
 			}
 					
 		}
