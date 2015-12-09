@@ -38,6 +38,9 @@ public class IntervalTree {
 	}
 
 	public boolean containsDestinationAddress(int address, int destination) {
+		if(!map.containsKey(address)){
+			return false;
+		}
 		return map.get(address).contains(destination);
 	}
 

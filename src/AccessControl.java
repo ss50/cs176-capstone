@@ -4,20 +4,25 @@ import java.util.concurrent.ConcurrentHashMap;
 public class AccessControl {
 	
 	private ConcurrentHashMap<Integer, Boolean> pngList;
-//	private ConcurrentHashMap<Integer, Integer> dList;
 	private IntervalTree dList;
 	
 	public AccessControl() {
 		pngList = new ConcurrentHashMap<Integer, Boolean>();
-		dList = new ConcurrentHashMap<Integer, Integer>();
+		dList = IntervalTree.getParallelIntervalTree();
+	}
+	
+	public boolean isValidDataPacket(int dest, int src) {
+		return isDestAcceptingSource(src,dest) && !isPNG(src);
 	}
 	
 	public void setAcceptingSources(int dest, int addressBegin, int addressEnd, boolean acceptingRange) {
-		
+		if(acceptingRange){
+			dList.addAddressRange(dest, addressBegin, addressEnd);
+		}
 	}
 	
-	public List<Integer> getAcceptingSources(int dest, int addressBegin, int addressEnd, boolean acceptingRange) {
-		return null;
+	public boolean isDestAcceptingSource(int src, int dest) {
+		return dList.containsDestinationAddress(src, dest);
 	}
 	
 	public void setPNG(int sourceAddress, boolean isPNG){
