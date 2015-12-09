@@ -11,6 +11,7 @@ public class Dispatcher implements Runnable {
 	private DataPacketHandler dataHandler;
 	private AtomicInteger numInFlight = new AtomicInteger(0);
 	private AccessControl accessControl;
+	private AtomicInteger numPacketsDistributed = new AtomicInteger(0);
 
 	public Dispatcher(PaddedPrimitiveNonVolatile<Boolean> done, PaddedPrimitiveNonVolatile<Integer> numInFlight, PaddedPrimitive<Boolean> memFence, AccessControl accessControl, int numAddressesLog, PacketGenerator gen) {
 		this.done = done;
@@ -34,7 +35,7 @@ public class Dispatcher implements Runnable {
 				while (numInFlight.get() > 256 && !done.value) {}
 				numInFlight.addAndGet(1);
 				// decrements the number of packets in flight
-				CallbackFunction callbackFunc = () -> this.numInFlight.decrementAndGet(); 
+				CallbackFunction callbackFunc = () -> {this.numInFlight.decrementAndGet(); return numPacketsDistributed.incrementAndGet();}; 
 //				inFlight.value++;
 				switch (packet.type) {
 				case ConfigPacket:
