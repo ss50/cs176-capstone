@@ -3,7 +3,8 @@ import java.util.concurrent.Executors;
 
 
 public class ConfigPacketHandler implements Runnable{
-	private final ExecutorService threadPool = Executors.newCachedThreadPool();
+	private final ExecutorService threadPool = Executors.newSingleThreadExecutor();
+//	private final ExecutorService threadPool = Executors.newCachedThreadPool();
 	private ReadWriteLock lockArray;
 	private int numAddresses;
 	private AccessControl accessControl;
@@ -11,6 +12,7 @@ public class ConfigPacketHandler implements Runnable{
 	public ConfigPacketHandler(int numAddressesLog, AccessControl ac) {
 		this.numAddresses = (int) Math.pow(2, numAddresses);
 		this.accessControl = ac;
+		lockArray = new ReadWriteLock(this.numAddresses);
 	}
 
 	@Override

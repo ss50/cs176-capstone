@@ -2,7 +2,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class DataPacketHandler implements Runnable {
-	private final ExecutorService threadPool = Executors.newCachedThreadPool();
+	private final ExecutorService threadPool = Executors.newSingleThreadExecutor();
+//	private final ExecutorService threadPool = Executors.newCachedThreadPool();
+
 	private int numAddresses;
 	private ReadWriteLock lockArray;
 	private AccessControl accessControl;
@@ -10,6 +12,7 @@ public class DataPacketHandler implements Runnable {
 	public DataPacketHandler(int numAddresses, AccessControl ac) {
 		this.numAddresses = numAddresses;
 		this.accessControl = ac;
+		lockArray = new ReadWriteLock(this.numAddresses);
 	}
 
 	@Override

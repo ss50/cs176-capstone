@@ -96,18 +96,17 @@ class SerialQueueFirewall {
 class ParallelFirewall {
   public static void main(String[] args) {
 	final int numMilliseconds = Integer.parseInt(args[0]);
-    final int numSources = Integer.parseInt(args[1]);
 
-    final int numAddressesLog = Integer.parseInt(args[2]);    
-    final int numTrainsLog = Integer.parseInt(args[3]);
-    final double meanTrainSize = Double.parseDouble(args[4]);
-    final double meanTrainsPerComm = Double.parseDouble(args[5]);
-    final int meanWindow = Integer.parseInt(args[6]);
-    final int meanCommsPerAddress = Integer.parseInt(args[7]);
-    final int meanWork = Integer.parseInt(args[8]);
-    final double configFraction = Double.parseDouble(args[9]);
-    final double pngFraction = Double.parseDouble(args[10]);
-    final double acceptingFraction = Double.parseDouble(args[11]);
+    final int numAddressesLog = Integer.parseInt(args[1]);    
+    final int numTrainsLog = Integer.parseInt(args[2]);
+    final double meanTrainSize = Double.parseDouble(args[3]);
+    final double meanTrainsPerComm = Double.parseDouble(args[4]);
+    final int meanWindow = Integer.parseInt(args[5]);
+    final int meanCommsPerAddress = Integer.parseInt(args[6]);
+    final int meanWork = Integer.parseInt(args[7]);
+    final double configFraction = Double.parseDouble(args[8]);
+    final double pngFraction = Double.parseDouble(args[9]);
+    final double acceptingFraction = Double.parseDouble(args[10]);
     StopWatch timer = new StopWatch();
 
     PacketGenerator pktGen = new PacketGenerator(numAddressesLog, numTrainsLog, meanTrainSize, meanTrainsPerComm,
@@ -125,11 +124,13 @@ class ParallelFirewall {
 
     Fingerprint residue = new Fingerprint();
     int totalPackets = (int) Math.pow(2, numAddressesLog);
-    AtomicQueue packetQueues[] = new AtomicQueue[numSources];
+    //AtomicQueue packetQueues[] = new AtomicQueue[numSources];
     
+    /*
     for (int i = 0; i < numSources; i++) {
     	packetQueues[i] = new AtomicQueue<Packet>();
-    }   
+    } 
+    */  
     
     AccessControl accessControl = new AccessControl(true);
     Dispatcher dispatcher = new Dispatcher(done,numInFlight, memFence, accessControl, numAddressesLog, pktGen);
