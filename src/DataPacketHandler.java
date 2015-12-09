@@ -41,6 +41,7 @@ public class DataPacketHandler implements Runnable {
 			Header header = p.header;
 			Body body = p.body;
 			lockArray.lockRead(header.dest);
+			System.out.println(header.source);
 			if (accessControl.isValidDataPacket(header.source, header.dest)) {
 				long checksum = residue.getFingerprint(body.iterations, body.seed);
 				HistogramGenerator.addFingerprintSighting(checksum);

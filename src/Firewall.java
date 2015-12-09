@@ -1,3 +1,7 @@
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 class SerialFirewall {
@@ -109,6 +113,7 @@ class ParallelFirewall {
     final double configFraction = Double.parseDouble(args[8]);
     final double pngFraction = Double.parseDouble(args[9]);
     final double acceptingFraction = Double.parseDouble(args[10]);
+    final String histogramOutputFile = args[11];
     StopWatch timer = new StopWatch();
 
     PacketGenerator pktGen = new PacketGenerator(numAddressesLog, numTrainsLog, meanTrainSize, meanTrainsPerComm,
@@ -125,7 +130,15 @@ class ParallelFirewall {
     // ...
 
     Fingerprint residue = new Fingerprint();
+    AccessControl accessControl = new AccessControl(true);
     int totalPackets = (int) Math.pow(2, numAddressesLog);
+    
+    for (int i = 0; i < totalPackets; i++) {
+    	Packet configPacket = pktGen.getConfigPacket();
+    	Config config = configPacket.config;
+    	accessControl.setPNG(config.address, config.personaNonGrata);
+    	accessControl.setAcceptingSources(config.address, config.addressBegin, config.addressEnd, config.acceptingRange);
+    }
     //AtomicQueue packetQueues[] = new AtomicQueue[numSources];
     
     /*
@@ -138,9 +151,10 @@ class ParallelFirewall {
 	
 	CallbackFunction callbackFunc = () -> {numPacketsInFlight.decrementAndGet(); return numPacketsDistributed.incrementAndGet();}; 
 
-    AccessControl accessControl = new AccessControl(true);
-    Dispatcher dispatcher = new Dispatcher(done,numInFlight, memFence, accessControl, numAddressesLog, pktGen,cf);
+    
+    Dispatcher dispatcher = new Dispatcher(done,numInFlight, memFence, accessControl, numAddressesLog, pktGen, callbackFunc);
     Thread dispatcherThread = new Thread(dispatcher);
+    
     // Allocate and initialize an array of Worker classes, implementing Runnable
     // and the corresponding Worker Threads
     // ...
@@ -166,5 +180,19 @@ class ParallelFirewall {
     } catch (InterruptedException e) {;}
     timer.stopTimer();
     System.out.println(timer.getElapsedTime());
+    try {
+		FileWriter writer = new FileWriter(histogramOutputFile);
+		ConcurrentHashMap<Long, AtomicInteger> histogram = HistogramGenerator.getHistogram();
+		for (Map.Entry<Long, AtomicInteger> entry: histogram.entrySet()) {
+			long packetID = entry.getKey();
+			int count = entry.getValue().get();
+			System.out.println("Packet: " + packetID + " count: " + count);
+			writer.write("Packet: " + packetID + " count: " + count);
+			writer.close();
+		}
+	} catch (IOException e1) {
+		// TODO Auto-generated catch block
+		e1.printStackTrace();
+	} 
   }
 }
