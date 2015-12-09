@@ -24,6 +24,7 @@ public class Dispatcher implements Runnable {
 		dataHandler = new DataPacketHandler(numAddresses, this.accessControl);
 	}
 
+
 	
 	@Override
 	public void run() {
@@ -49,7 +50,7 @@ public class Dispatcher implements Runnable {
 				}
 			}
 		}
-
+		System.out.println("Number of packets dispatched: " + numPacketsDistributed.get());
 	}
 
 }
