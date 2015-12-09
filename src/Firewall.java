@@ -16,12 +16,20 @@ class SerialFirewall {
     PacketGenerator pktGen = new PacketGenerator(numAddressesLog, numTrainsLog, meanTrainSize, meanTrainsPerComm,
     												meanWindow, meanCommsPerAddress, meanWork, configFraction, pngFraction, acceptingFraction);
     Fingerprint residue = new Fingerprint();
+
+    int initializedTotalPackets = (int) Math.pow(Math.pow(2, numAddressesLog), 1.5);
     
     PaddedPrimitiveNonVolatile<Boolean> done = new PaddedPrimitiveNonVolatile<Boolean>(false);
     PaddedPrimitive<Boolean> memFence = new PaddedPrimitive<Boolean>(false);
-    
-
     AccessControl accessControl = new AccessControl();
+    
+    for (int i = 0; i < initializedTotalPackets; i++) {
+    	Packet configPacket = pktGen.getConfigPacket();
+    	Config config = configPacket.config;
+    	accessControl.setAddress(config.address, config.personaNonGrata);
+    	accessControl.setAcceptingSources(config.address, config.addressBegin, config.addressEnd, config.acceptingRange);
+    }
+    
     SerialPacketWorker serialWorker = new SerialPacketWorker(done, pktGen, accessControl);
     Thread workerThread = new Thread(serialWorker);
     
