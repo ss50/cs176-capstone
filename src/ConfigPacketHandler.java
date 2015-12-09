@@ -47,8 +47,10 @@ public class ConfigPacketHandler implements Runnable{
 		
 		@Override
 		public void run() {
+			lockArray.lockWrite(address);
 			accessControl.setPNG(address, personaNonGrata);
 			accessControl.setAcceptingSources(address, addressBegin, addressEnd, acceptingRange);
+			lockArray.unlockWrite(address);
 			cf.operation();
 		}
 

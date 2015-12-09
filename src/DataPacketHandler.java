@@ -38,10 +38,12 @@ public class DataPacketHandler implements Runnable {
 		public void run() {
 			Header header = p.header;
 			Body body = p.body;
+			lockArray.lockRead(header.dest);
 			if (accessControl.isValidDataPacket(header.source, header.dest)) {
 				long checksum = residue.getFingerprint(body.iterations, body.seed);
 				HistogramGenerator.addFingerprintSighting(checksum);
 			}
+			lockArray.unlockRead(header.dest);
 			cf.operation();	
 					
 		}
