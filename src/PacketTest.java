@@ -23,8 +23,9 @@ class SerialPacket {
 
     PaddedPrimitiveNonVolatile<Boolean> done = new PaddedPrimitiveNonVolatile<Boolean>(false);
     PaddedPrimitive<Boolean> memFence = new PaddedPrimitive<Boolean>(false);
+    AccessControl ac = new AccessControl();
         
-    SerialPacketWorker workerData = new SerialPacketWorker(done, pktGen, numSources);
+    SerialPacketWorker workerData = new SerialPacketWorker(done, pktGen, ac);
     Thread workerThread = new Thread(workerData);
     
     workerThread.start();
@@ -73,7 +74,8 @@ class ParallelPacket {
     
     // TODO: change this to ParallelPacketWorker once the class is implemented
     PaddedPrimitiveNonVolatile<Boolean> done = new PaddedPrimitiveNonVolatile<Boolean>(false);
-    SerialPacketWorker workerData = new SerialPacketWorker(done, pktGen, numSources);
+    AccessControl ac = new AccessControl();
+    SerialPacketWorker workerData = new SerialPacketWorker(done, pktGen, ac);
     // 
     // Allocate and initialize locks and any signals used to marshal threads (eg. done signals)
     // 
