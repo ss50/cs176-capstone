@@ -2,8 +2,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class DataPacketHandler implements Runnable {
-	private final ExecutorService threadPool = Executors.newSingleThreadExecutor();
-//	private final ExecutorService threadPool = Executors.newCachedThreadPool();
+	private final ExecutorService threadPool = Executors.newCachedThreadPool();
 
 	private int numAddresses;
 	private ReadWriteLock lockArray;
