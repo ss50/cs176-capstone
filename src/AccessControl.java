@@ -24,6 +24,9 @@ public class AccessControl {
 	}
 	
 	public boolean getAddressPermission(int sourceAddress) {
+		if (pngList.get(sourceAddress) == null) {
+			return false;
+		}
 		return pngList.get(sourceAddress);
 	}
 	
