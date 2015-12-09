@@ -139,7 +139,7 @@ class ParallelFirewall {
 	CallbackFunction callbackFunc = () -> {numPacketsInFlight.decrementAndGet(); return numPacketsDistributed.incrementAndGet();}; 
 
     AccessControl accessControl = new AccessControl(true);
-    Dispatcher dispatcher = new Dispatcher(done,numInFlight, memFence, accessControl, numAddressesLog, pktGen,cf);
+    Dispatcher dispatcher = new Dispatcher(done,numInFlight, memFence, accessControl, numAddressesLog, pktGen,callbackFunc);
     Thread dispatcherThread = new Thread(dispatcher);
     // Allocate and initialize an array of Worker classes, implementing Runnable
     // and the corresponding Worker Threads
@@ -166,5 +166,6 @@ class ParallelFirewall {
     } catch (InterruptedException e) {;}
     timer.stopTimer();
     System.out.println(timer.getElapsedTime());
+    System.out.println(numPacketsDistributed.get());
   }
 }
