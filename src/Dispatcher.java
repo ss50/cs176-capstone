@@ -9,11 +9,12 @@ public class Dispatcher implements Runnable {
 	private int numAddresses;
 	private ConfigPacketHandler configHandler;
 	private DataPacketHandler dataHandler;
-	private AtomicInteger numInFlight = new AtomicInteger(0);
 	private AccessControl accessControl;
+	private AtomicInteger numInFlight = new AtomicInteger(0);
 	private AtomicInteger numPacketsDistributed = new AtomicInteger(0);
+	private CallbackFunction cf;
 
-	public Dispatcher(PaddedPrimitiveNonVolatile<Boolean> done, PaddedPrimitiveNonVolatile<Integer> numInFlight, PaddedPrimitive<Boolean> memFence, AccessControl accessControl, int numAddressesLog, PacketGenerator gen) {
+	public Dispatcher(PaddedPrimitiveNonVolatile<Boolean> done, PaddedPrimitiveNonVolatile<Integer> numInFlight, PaddedPrimitive<Boolean> memFence, AccessControl accessControl, int numAddressesLog, PacketGenerator gen, CallbackFunction cf) {
 		this.done = done;
 //		this.inFlight = numInFlight;
 		this.memFence = memFence;
@@ -22,6 +23,7 @@ public class Dispatcher implements Runnable {
 		this.accessControl = accessControl;
 		configHandler = new ConfigPacketHandler(numAddresses, this.accessControl);
 		dataHandler = new DataPacketHandler(numAddresses, this.accessControl);
+		this.cf = cf;
 	}
 
 

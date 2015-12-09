@@ -1,3 +1,5 @@
+import java.util.concurrent.atomic.AtomicInteger;
+
 class SerialFirewall {
   public static void main(String[] args) {
 	final int numMilliseconds = Integer.parseInt(args[0]);
@@ -131,9 +133,13 @@ class ParallelFirewall {
     	packetQueues[i] = new AtomicQueue<Packet>();
     } 
     */  
-    
+    AtomicInteger numPacketsInFlight = new AtomicInteger(0);
+	AtomicInteger numPacketsDistributed = new AtomicInteger(0);
+	
+	CallbackFunction callbackFunc = () -> {numPacketsInFlight.decrementAndGet(); return numPacketsDistributed.incrementAndGet();}; 
+
     AccessControl accessControl = new AccessControl(true);
-    Dispatcher dispatcher = new Dispatcher(done,numInFlight, memFence, accessControl, numAddressesLog, pktGen);
+    Dispatcher dispatcher = new Dispatcher(done,numInFlight, memFence, accessControl, numAddressesLog, pktGen,cf);
     Thread dispatcherThread = new Thread(dispatcher);
     // Allocate and initialize an array of Worker classes, implementing Runnable
     // and the corresponding Worker Threads
