@@ -124,7 +124,6 @@ class ParallelFirewall {
     final double configFraction = Double.parseDouble(args[8]);
     final double pngFraction = Double.parseDouble(args[9]);
     final double acceptingFraction = Double.parseDouble(args[10]);
-    final String histogramOutputFile = args[11];
     StopWatch timer = new StopWatch();
 
     PacketGenerator pktGen = new PacketGenerator(numAddressesLog, numTrainsLog, meanTrainSize, meanTrainsPerComm,
@@ -191,19 +190,5 @@ class ParallelFirewall {
     timer.stopTimer();
     System.out.println(timer.getElapsedTime());
     System.out.println(numPacketsDistributed.get());
-    try {
-		FileWriter writer = new FileWriter(histogramOutputFile);
-		ConcurrentHashMap<Long, AtomicInteger> histogram = HistogramGenerator.getHistogram();
-		for (Map.Entry<Long, AtomicInteger> entry: histogram.entrySet()) {
-			long packetID = entry.getKey();
-			int count = entry.getValue().get();
-			System.out.println("Packet: " + packetID + " count: " + count);
-			writer.write("Packet: " + packetID + " count: " + count);
-			writer.close();
-		}
-	} catch (IOException e1) {
-		// TODO Auto-generated catch block
-		e1.printStackTrace();
-	} 
   }
 }
