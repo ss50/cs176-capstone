@@ -6,12 +6,12 @@ public class AccessControl {
 	private ConcurrentHashMap<Integer, Boolean> pngList;
 	private IntervalTree dList;
 	
-	public AccessControl() {
+	public AccessControl(boolean isConcurrent) {
 		pngList = new ConcurrentHashMap<Integer, Boolean>();
-		dList = IntervalTree.getParallelIntervalTree();
+		dList = isConcurrent ? IntervalTree.getParallelIntervalTree() : IntervalTree.getSerialIntervalTree();
 	}
 	
-	public boolean isValidDataPacket(int dest, int src) {
+	public boolean isValidDataPacket(int src, int dest) {
 		return isDestAcceptingSource(src,dest) && !isPNG(src);
 	}
 	

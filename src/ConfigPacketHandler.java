@@ -47,7 +47,7 @@ public class ConfigPacketHandler implements Runnable{
 		
 		@Override
 		public void run() {
-			accessControl.setAddress(address, personaNonGrata);
+			accessControl.setPNG(address, personaNonGrata);
 			accessControl.setAcceptingSources(address, addressBegin, addressEnd, acceptingRange);
 			cf.operation();
 		}

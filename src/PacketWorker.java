@@ -26,13 +26,13 @@ class SerialPacketWorker implements PacketWorker {
     	  switch (packet.type) {
     	  		case ConfigPacket:
     	  			Config config = packet.config;
-    	  			accessControl.setAddress(config.address, config.personaNonGrata);
+    	  			accessControl.setPNG(config.address, config.personaNonGrata);
     	  			accessControl.setAcceptingSources(config.address, config.addressBegin, config.addressEnd, config.acceptingRange);
     	  			break;
     	  		case DataPacket:
     	  			Body body = packet.body;
     	  			Header header = packet.header;
-    	  			if (accessControl.getAddressPermission(header.source) /* and source address is in Dlist[dest] list*/) {
+    	  			if (accessControl.isValidDataPacket(header.source, header.dest)) {
     	  				long checksum = residue.getFingerprint(body.iterations, body.seed);
         	  			HistogramGenerator.addFingerprintSighting(checksum);
     	  			}

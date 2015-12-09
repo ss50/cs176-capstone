@@ -21,12 +21,12 @@ class SerialFirewall {
     
     PaddedPrimitiveNonVolatile<Boolean> done = new PaddedPrimitiveNonVolatile<Boolean>(false);
     PaddedPrimitive<Boolean> memFence = new PaddedPrimitive<Boolean>(false);
-    AccessControl accessControl = new AccessControl();
+    AccessControl accessControl = new AccessControl(false);
     
     for (int i = 0; i < initializedTotalPackets; i++) {
     	Packet configPacket = pktGen.getConfigPacket();
     	Config config = configPacket.config;
-    	accessControl.setAddress(config.address, config.personaNonGrata);
+    	accessControl.setPNG(config.address, config.personaNonGrata);
     	accessControl.setAcceptingSources(config.address, config.addressBegin, config.addressEnd, config.acceptingRange);
     }
     
@@ -131,7 +131,7 @@ class ParallelFirewall {
     	packetQueues[i] = new AtomicQueue<Packet>();
     }   
     
-    AccessControl accessControl = new AccessControl();
+    AccessControl accessControl = new AccessControl(true);
     Dispatcher dispatcher = new Dispatcher(done,numInFlight, memFence, accessControl, numAddressesLog, pktGen);
     Thread dispatcherThread = new Thread(dispatcher);
     // Allocate and initialize an array of Worker classes, implementing Runnable
