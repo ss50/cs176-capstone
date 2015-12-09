@@ -98,6 +98,17 @@ class SerialQueueFirewall {
   }
 }
 
+class FirewallTest{
+	public static void main(String[] args){
+		String[] myArgs = {"5", "11", "12", "5", "1", "3", "3", "3822", ".24", ".04", ".96"};
+		boolean serial = false;
+		if(serial){
+			SerialFirewall.main(myArgs);
+		} else{
+			ParallelFirewall.main(myArgs);
+		}
+	}
+}
 
 class ParallelFirewall {
   public static void main(String[] args) {
@@ -133,12 +144,12 @@ class ParallelFirewall {
     AccessControl accessControl = new AccessControl(true);
     int totalPackets = (int) Math.pow(2, numAddressesLog);
     
-    for (int i = 0; i < totalPackets; i++) {
-    	Packet configPacket = pktGen.getConfigPacket();
-    	Config config = configPacket.config;
-    	accessControl.setPNG(config.address, config.personaNonGrata);
-    	accessControl.setAcceptingSources(config.address, config.addressBegin, config.addressEnd, config.acceptingRange);
-    }
+//    for (int i = 0; i < totalPackets; i++) {
+//    	Packet configPacket = pktGen.getConfigPacket();
+//    	Config config = configPacket.config;
+//    	accessControl.setPNG(config.address, config.personaNonGrata);
+//    	accessControl.setAcceptingSources(config.address, config.addressBegin, config.addressEnd, config.acceptingRange);
+//    }
     //AtomicQueue packetQueues[] = new AtomicQueue[numSources];
     
     /*
@@ -151,7 +162,6 @@ class ParallelFirewall {
 	
 	CallbackFunction callbackFunc = () -> {numPacketsInFlight.decrementAndGet(); return numPacketsDistributed.incrementAndGet();}; 
 
-    AccessControl accessControl = new AccessControl(true);
     Dispatcher dispatcher = new Dispatcher(done,numInFlight, memFence, accessControl, numAddressesLog, pktGen, callbackFunc);
     Thread dispatcherThread = new Thread(dispatcher);
     
