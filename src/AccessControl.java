@@ -4,7 +4,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public class AccessControl {
 	
 	private ConcurrentHashMap<Integer, Boolean> pngList;
-	private ConcurrentHashMap<Integer, Integer> dList;
+//	private ConcurrentHashMap<Integer, Integer> dList;
+	private IntervalTree dList;
 	
 	public AccessControl() {
 		pngList = new ConcurrentHashMap<Integer, Boolean>();
@@ -19,14 +20,10 @@ public class AccessControl {
 		return null;
 	}
 	
-	public void setAddress(int sourceAddress, boolean isPNG){
+	public void setPNG(int sourceAddress, boolean isPNG){
 		pngList.put(sourceAddress, isPNG);
 	}
-	
-	public boolean getAddressPermission(int sourceAddress) {
-		return pngList.get(sourceAddress);
-	}
-	
+		
 	public boolean isPNG(int sourceAddress){
 		return pngList.contains(sourceAddress) ? pngList.get(sourceAddress) : false;
 	}
