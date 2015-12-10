@@ -15,7 +15,7 @@ public class IntervalTree {
 
 	public static IntervalTree getSerialIntervalTree() {
 		return new IntervalTree(new HashMap<>());
-	}
+	}				
 
 	public static IntervalTree getParallelIntervalTree() {
 		return new IntervalTree(new ConcurrentHashMap<>());

@@ -2,6 +2,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
 class SerialFirewall {
@@ -125,7 +127,7 @@ class FirewallTest {
 }
 
 class ParallelFirewall {
-	public static int NUM_DISPATCH_THREADS = 50;
+	public static int NUM_DISPATCH_THREADS = 70;
 
 	public static void main(String[] args) {
 		System.out.println("ParallelFirewall");
@@ -191,6 +193,8 @@ class ParallelFirewall {
 					accessControl, numAddressesLog, pktGen, callbackFunc);
 			dispatcherThreads[i] = new Thread(dispatcher);
 		}
+		ExecutorService dispatchPool = Executors.newCachedThreadPool();
+		
 
 		// Allocate and initialize an array of Worker classes, implementing
 		// Runnable
