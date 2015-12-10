@@ -20,7 +20,6 @@ class SerialPacketWorker implements PacketWorker {
   }
   
   public void run() {
-	  System.out.println(done.value);
       while (!done.value) {
     	  Packet packet = pkt.getPacket();
     	  switch (packet.type) {
