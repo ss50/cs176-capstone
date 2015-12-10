@@ -1,6 +1,6 @@
 
 public interface Queue<T> {
 
-	void enqueue(int index, T item);
-	void dequeue(int index);
+	boolean enqueue(int index, T item);
+	T dequeue(int index);
 }

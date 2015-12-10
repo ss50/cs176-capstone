@@ -131,6 +131,8 @@ class FirewallTest {
 
 class ParallelFirewall {
 	public static int NUM_DISPATCH_THREADS = 70;
+	public static int NUM_CONCURRENT_QUEUES = 70;
+	public static int NUM_HANDLER_THREADS = 100;
 
 	public static void main(String[] args) {
 		System.out.println("ParallelFirewall");
@@ -156,7 +158,7 @@ class ParallelFirewall {
 		PaddedPrimitiveNonVolatile<Integer> numInFlight = new PaddedPrimitiveNonVolatile<Integer>(
 				0);
 		PaddedPrimitive<Boolean> memFence = new PaddedPrimitive<Boolean>(false);
-		ConcurrentQueue queues = new ConcurrentQueue(NUM_DISPATCH_THREADS);
+		
 		// ...
 		// Allocate and initialize bank of Lamport queues, as in
 		// SerialQueueFirewall
@@ -165,7 +167,7 @@ class ParallelFirewall {
 		// Allocate and initialize a Dispatcher class implementing Runnable
 		// and a corresponding Dispatcher Thread
 		// ...
-
+		ConcurrentQueue.initialize();
 		Fingerprint residue = new Fingerprint();
 		AccessControl accessControl = new AccessControl(true);
 		int totalPackets = (int) Math.pow(Math.pow(2, numAddressesLog), 1.5);

@@ -2,10 +2,10 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 @SuppressWarnings("hiding")
 public class ConcurrentQueue{
-	static final ConcurrentLinkedQueue<PacketCallbackBundle> queue[] = new ConcurrentLinkedQueue[ParallelFirewall.NUM_DISPATCH_THREADS];
+	static final ConcurrentLinkedQueue<PacketCallbackBundle> queue[] = new ConcurrentLinkedQueue[ParallelFirewall.NUM_CONCURRENT_QUEUES];
 	
 	public static void initialize(){
-		for (int i = 0; i < queue.length; i++) {
+		for (int i = 0; i < ParallelFirewall.NUM_CONCURRENT_QUEUES; i++) {
 			queue[i] = new ConcurrentLinkedQueue<PacketCallbackBundle>();
 		}
 	}
