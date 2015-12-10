@@ -156,6 +156,7 @@ class ParallelFirewall {
 		PaddedPrimitiveNonVolatile<Integer> numInFlight = new PaddedPrimitiveNonVolatile<Integer>(
 				0);
 		PaddedPrimitive<Boolean> memFence = new PaddedPrimitive<Boolean>(false);
+		ConcurrentQueue queues = new ConcurrentQueue(NUM_DISPATCH_THREADS);
 		// ...
 		// Allocate and initialize bank of Lamport queues, as in
 		// SerialQueueFirewall
