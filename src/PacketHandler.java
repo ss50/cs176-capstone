@@ -2,7 +2,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class PacketHandler /** implements Runnable */ {
+public class PacketHandler /** implements Runnable */
+{
 
 	private final ExecutorService threadPool;
 	private ReadWriteLock lockArray;
@@ -13,7 +14,8 @@ public class PacketHandler /** implements Runnable */ {
 	private PacketThread[] packetThreads;
 	private AtomicBoolean done;
 
-	public PacketHandler(int numAddresses, AccessControl ac, int numThreads, AtomicBoolean done) {
+	public PacketHandler(int numAddresses, AccessControl ac, int numThreads,
+			AtomicBoolean done) {
 		this.numThreads = numThreads;
 		this.numAddresses = numAddresses;
 		this.accessControl = ac;
@@ -26,16 +28,17 @@ public class PacketHandler /** implements Runnable */ {
 			packetThreads[i] = new PacketThread(i);
 			threadPool.execute(packetThreads[i]);
 		}
-		
+
 	}
-//
-//	@Override
-//	public void run() {
-//		// TODO Auto-generated method stub
-//		while (done.value) {
-//
-//		}
-//	}
+
+	//
+	// @Override
+	// public void run() {
+	// // TODO Auto-generated method stub
+	// while (done.value) {
+	//
+	// }
+	// }
 
 	// public void handlePacket(Packet p, CallbackFunction cf) {
 	// PacketThread d = new PacketThread(p, cf);
@@ -44,7 +47,7 @@ public class PacketHandler /** implements Runnable */ {
 
 	private class PacketThread implements Runnable {
 		private int queueIndex;
-		
+
 		private PacketThread(int queueIndex) {
 			this.queueIndex = queueIndex;
 			// TODO Auto-generated constructor stub
@@ -54,8 +57,9 @@ public class PacketHandler /** implements Runnable */ {
 		public void run() {
 			// TODO Auto-generated method stub
 			while (!done.get()) {
-				PacketCallbackBundle bundle = ConcurrentQueue.dequeue(this.queueIndex);
-				if(bundle == null){
+				PacketCallbackBundle bundle = ConcurrentQueue
+						.dequeue(this.queueIndex);
+				if (bundle == null) {
 					continue;
 				}
 				Packet p = bundle.packet;
@@ -63,29 +67,44 @@ public class PacketHandler /** implements Runnable */ {
 				switch (p.type) {
 				case ConfigPacket:
 					Config config = p.config;
-					lockArray.lockWrite(config.address);
-					accessControl
-							.setPNG(config.address, config.personaNonGrata);
-					accessControl.setAcceptingSources(config.address,
-							config.addressBegin, config.addressEnd,
-							config.acceptingRange);
-					lockArray.unlockWrite(config.address);
+					boolean locked = lockArray.trylockWrite(config.address);
+					if (locked) {
+						accessControl.setPNG(config.address,
+								config.personaNonGrata);
+						accessControl.setAcceptingSources(config.address,
+								config.addressBegin, config.addressEnd,
+								config.acceptingRange);
+						lockArray.unlockWrite(config.address);
+					} else {
+						returnToQueue(bundle);
+					}
+
 					break;
 				case DataPacket:
 					Header header = p.header;
 					Body body = p.body;
-					lockArray.lockRead(header.dest);
-					// System.out.println(header.source);
-					if (accessControl.isValidDataPacket(header.source,
-							header.dest)) {
-						long checksum = residue.getFingerprint(body.iterations,
-								body.seed);
-						HistogramGenerator.addFingerprintSighting(checksum);
+					boolean locked = lockArray.trylockRead(header.dest);
+					if (locked) {
+						// System.out.println(header.source);
+						if (accessControl.isValidDataPacket(header.source,
+								header.dest)) {
+							long checksum = residue.getFingerprint(
+									body.iterations, body.seed);
+							HistogramGenerator.addFingerprintSighting(checksum);
+						}
+						lockArray.unlockRead(header.dest);
+					} else{
+						returnToQueue(bundle);
 					}
-					lockArray.unlockRead(header.dest);
+
 					break;
 				}
 				cf.operation();
+			}
+		}
+
+		private void returnToQueue(PacketCallbackBundle p) {
+			while (!done.get() && !ConcurrentQueue.enqueue(this.queueIndex, p)) {
 			}
 		}
 
