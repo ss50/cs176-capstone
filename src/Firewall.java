@@ -118,7 +118,7 @@ class SerialQueueFirewall {
 
 class FirewallTest {
 	public static void main(String[] args) {
-		String[] myArgs = { "10000", "11", "12", "5", "1", "3", "3", "3822",
+		String[] myArgs = { "3000", "11", "12", "5", "1", "3", "3", "3822",
 				".24", ".04", ".96" };
 		boolean serial = false;
 		if (serial) {
@@ -130,9 +130,9 @@ class FirewallTest {
 }
 
 class ParallelFirewall {
-	public static int NUM_DISPATCH_THREADS = 70;
-	public static int NUM_CONCURRENT_QUEUES = 70;
-	public static int NUM_HANDLER_THREADS = 100;
+	public static int NUM_DISPATCH_THREADS = 1;
+	public static int NUM_CONCURRENT_QUEUES = 1;
+	public static int NUM_HANDLER_THREADS = 3;
 
 	public static void main(String[] args) {
 		System.out.println("ParallelFirewall");

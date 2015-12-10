@@ -24,7 +24,7 @@ public class Dispatcher implements Runnable {
 		this.pktGen = gen;
 		this.accessControl = accessControl;
 		packetHandler = new PacketHandler(this.numAddresses,
-				this.accessControl, ParallelFirewall.NUM_HANDLER_THREADS);
+				this.accessControl, ParallelFirewall.NUM_HANDLER_THREADS, done);
 		this.cf = cf;
 		this.queueIndex = queueIndex;
 	}
@@ -36,11 +36,17 @@ public class Dispatcher implements Runnable {
 			// for (int i = 0; i < numAddresses; i++) {
 			Packet packet = pktGen.getPacket();
 			// only 256 packets can be in flight at once
-			while (numInFlight.get() > 256 && !done.value) {
-			}
+//			while (numInFlight.get() > 256 && !done.value) {
+//			}
 			numInFlight.addAndGet(1);
 			PacketCallbackBundle p = new PacketCallbackBundle(this.cf, packet);
 			while (!ConcurrentQueue.enqueue(this.queueIndex, p)) {
+				try {
+					Thread.sleep(30);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		}
 	}

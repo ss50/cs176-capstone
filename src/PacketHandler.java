@@ -1,35 +1,40 @@
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class PacketHandler implements Runnable {
+public class PacketHandler /** implements Runnable */ {
 
-	private final ExecutorService threadPool = Executors.newCachedThreadPool();
+	private final ExecutorService threadPool;
 	private ReadWriteLock lockArray;
 	private int numAddresses;
 	private AccessControl accessControl;
 	private Fingerprint residue;
 	private int numThreads;
 	private PacketThread[] packetThreads;
+	private PaddedPrimitiveNonVolatile<Boolean> done;
 
-	public PacketHandler(int numAddresses, AccessControl ac, int numThreads) {
+	public PacketHandler(int numAddresses, AccessControl ac, int numThreads, PaddedPrimitiveNonVolatile<Boolean> done) {
 		this.numThreads = numThreads;
 		this.numAddresses = numAddresses;
 		this.accessControl = ac;
 		lockArray = new ReadWriteLock(this.numAddresses);
 		residue = new Fingerprint();
+		this.packetThreads = new PacketThread[numThreads];
+		this.done = done;
+		this.threadPool = Executors.newCachedThreadPool();
 		for (int i = 0; i < packetThreads.length; i++) {
 			packetThreads[i] = new PacketThread(i);
+			threadPool.execute(packetThreads[i]);
 		}
 		
 	}
-
-	@Override
-	public void run() {
-		// TODO Auto-generated method stub
-		while (true) {
-
-		}
-	}
+//
+//	@Override
+//	public void run() {
+//		// TODO Auto-generated method stub
+//		while (done.value) {
+//
+//		}
+//	}
 
 	// public void handlePacket(Packet p, CallbackFunction cf) {
 	// PacketThread d = new PacketThread(p, cf);
@@ -47,8 +52,17 @@ public class PacketHandler implements Runnable {
 		@Override
 		public void run() {
 			// TODO Auto-generated method stub
-			while (true) {
+			while (!done.value) {
 				PacketCallbackBundle bundle = ConcurrentQueue.dequeue(this.queueIndex);
+				if(bundle == null){
+					try {
+						Thread.sleep(100);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					continue;
+				}
 				Packet p = bundle.packet;
 				CallbackFunction cf = bundle.cf;
 				switch (p.type) {
