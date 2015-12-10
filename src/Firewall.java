@@ -194,11 +194,9 @@ class ParallelFirewall {
 		Thread[] dispatcherThreads = new Thread[NUM_DISPATCH_THREADS];
 		for (int i = 0; i < NUM_DISPATCH_THREADS; i++) {
 			Dispatcher dispatcher = new Dispatcher(done, numInFlight, memFence,
-					accessControl, numAddressesLog, pktGen, callbackFunc);
+					accessControl, numAddressesLog, pktGen, callbackFunc, i);
 			dispatcherThreads[i] = new Thread(dispatcher);
 		}
-		ExecutorService dispatchPool = Executors.newCachedThreadPool();
-		
 
 		// Allocate and initialize an array of Worker classes, implementing
 		// Runnable
