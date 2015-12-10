@@ -84,7 +84,7 @@ class PacketGenerator {
     int trainIndex = uniGen.getRand() & mask;
     PacketStruct pkt = trains[trainIndex];
     Packet packet = new Packet(
-      new Header(pkt.pair.source, pkt.pair.dest, pkt.sequenceNumber, pkt.trainSize, pkt.tag),
+      new Header(pkt.pair.source % 3200, pkt.pair.dest % 3200, pkt.sequenceNumber, pkt.trainSize, pkt.tag),
       new Body(expGen.getRand(pkt.meanWork), uniGen.getRand()));
     pkt.sequenceNumber++;
     if( pkt.sequenceNumber == pkt.trainSize ) {// this was the last packet

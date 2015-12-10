@@ -43,10 +43,8 @@ class SerialFirewall {
 			accessControl.setAcceptingSources(config.address,
 					config.addressBegin, config.addressEnd,
 					config.acceptingRange);
-			System.out.println("Address: " + config.address + " Size of map: " + accessControl.getDListSize());
 		}
 		
-		accessControl.printDList();
 		
 		SerialPacketWorker serialWorker = new SerialPacketWorker(done, pktGen,
 				accessControl);
@@ -70,6 +68,8 @@ class SerialFirewall {
 		}
 		timer.stopTimer();
 		final long totalCount = serialWorker.totalPackets;
+		
+		HistogramGenerator.printHistogram();
 		System.out.println("count: " + totalCount);
 		System.out.println("time: " + timer.getElapsedTime());
 		System.out.println(totalCount / timer.getElapsedTime() + " pkts / ms");
@@ -120,7 +120,7 @@ class FirewallTest {
 	public static void main(String[] args) {
 		String[] myArgs = { "10000", "11", "12", "5", "1", "3", "3", "3822",
 				".24", ".04", ".96" };
-		boolean serial = false;
+		boolean serial = true;
 		if (serial) {
 			SerialFirewall.main(myArgs);
 		} else {
@@ -178,7 +178,6 @@ class ParallelFirewall {
 					config.acceptingRange);
 		}
 		
-		accessControl.printDList();
 		// AtomicQueue packetQueues[] = new AtomicQueue[numSources];
 
 		/*
@@ -237,6 +236,7 @@ class ParallelFirewall {
 		// System.out.println("elapsed time: " + timer.getElapsedTime());
 		// System.out.println("numPacketsDistributed: " +
 		// numPacketsDistributed.get());
+		//HistogramGenerator.printHistogram();
 		System.out.println("count: " + numPacketsDistributed);
 		System.out.println("time: " + timer.getElapsedTime());
 		System.out.println((float) numPacketsDistributed.get()
