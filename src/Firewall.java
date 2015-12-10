@@ -141,14 +141,14 @@ class ParallelFirewall {
 
     Fingerprint residue = new Fingerprint();
     AccessControl accessControl = new AccessControl(true);
-    int totalPackets = (int) Math.pow(2, numAddressesLog);
+    int totalPackets = (int) Math.pow(Math.pow(2, numAddressesLog), 1.5);
     
-//    for (int i = 0; i < totalPackets; i++) {
-//    	Packet configPacket = pktGen.getConfigPacket();
-//    	Config config = configPacket.config;
-//    	accessControl.setPNG(config.address, config.personaNonGrata);
-//    	accessControl.setAcceptingSources(config.address, config.addressBegin, config.addressEnd, config.acceptingRange);
-//    }
+    for (int i = 0; i < totalPackets; i++) {
+    	Packet configPacket = pktGen.getConfigPacket();
+    	Config config = configPacket.config;
+    	accessControl.setPNG(config.address, config.personaNonGrata);
+    	accessControl.setAcceptingSources(config.address, config.addressBegin, config.addressEnd, config.acceptingRange);
+    }
     //AtomicQueue packetQueues[] = new AtomicQueue[numSources];
     
     /*
