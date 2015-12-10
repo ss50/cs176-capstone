@@ -100,7 +100,7 @@ class SerialQueueFirewall {
 
 class FirewallTest{
 	public static void main(String[] args){
-		String[] myArgs = {"5", "11", "12", "5", "1", "3", "3", "3822", ".24", ".04", ".96"};
+		String[] myArgs = {"5000", "11", "12", "5", "1", "3", "3", "3822", ".04", ".04", ".76"};
 		boolean serial = false;
 		if(serial){
 			SerialFirewall.main(myArgs);
@@ -141,14 +141,14 @@ class ParallelFirewall {
 
     Fingerprint residue = new Fingerprint();
     AccessControl accessControl = new AccessControl(true);
-    int totalPackets = (int) Math.pow(2, numAddressesLog);
+    int totalPackets = (int) Math.pow(Math.pow(2, numAddressesLog), 1.5);
     
-//    for (int i = 0; i < totalPackets; i++) {
-//    	Packet configPacket = pktGen.getConfigPacket();
-//    	Config config = configPacket.config;
-//    	accessControl.setPNG(config.address, config.personaNonGrata);
-//    	accessControl.setAcceptingSources(config.address, config.addressBegin, config.addressEnd, config.acceptingRange);
-//    }
+    for (int i = 0; i < totalPackets; i++) {
+    	Packet configPacket = pktGen.getConfigPacket();
+    	Config config = configPacket.config;
+    	accessControl.setPNG(config.address, config.personaNonGrata);
+    	accessControl.setAcceptingSources(config.address, config.addressBegin, config.addressEnd, config.acceptingRange);
+    }
     //AtomicQueue packetQueues[] = new AtomicQueue[numSources];
     
     /*
