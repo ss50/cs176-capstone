@@ -119,8 +119,14 @@ class SerialQueueFirewall {
 
 class FirewallTest {
 	public static void main(String[] args) {
-		String[] myArgs = { "3000", "11", "12", "5", "1", "3", "3", "3822",
-				".24", ".04", ".96" };
+//		String[] myArgs = { "3000", "11", "12", "5", "1", "3", "3", "3822", ".24", ".04", ".96" };
+//		String[] myArgs = { "3000", "12", "10", "1", "3", "3", "1", "2644", ".11", ".09", ".92" };
+//		String[] myArgs = { "3000", "12", "10", "4", "3", "6", "2", "1304", ".10", ".03", ".90" };
+//		String[] myArgs = { "3000", "14", "10", "5", "5", "6", "2", "315", ".08", ".05", ".90" };
+//		String[] myArgs = { "3000", "15", "14", "9", "16", "7", "10", "4007", ".02", ".10", ".84" };
+		String[] myArgs = { "3000", "15", "15", "9", "10", "9", "9", "7125", ".01", ".2", ".77" };
+//		String[] myArgs = { "3000", "15", "15", "10", "13", "8", "10", "5328", ".04", ".18", ".8" };
+//		String[] myArgs = { "3000", "16", "14", "15", "12", "9", "5", "8840", ".04", ".19", ".76" };
 //		boolean serial = false;
 //		if (serial) {
 //			SerialFirewall.main(myArgs);
@@ -129,15 +135,16 @@ class FirewallTest {
 //		}
 		
 		SerialFirewall.main(myArgs);
+		System.out.println();
 		ParallelFirewall.main(myArgs);
 
 	}
 }
 
 class ParallelFirewall {
-	public static int NUM_DISPATCH_THREADS = 4;
+	public static int NUM_DISPATCH_THREADS = 6;
 	public static int NUM_CONCURRENT_QUEUES = 4;
-	public static int NUM_HANDLER_THREADS = 10;
+	public static int NUM_HANDLER_THREADS = 15;
 
 	public static void main(String[] args) {
 		System.out.println("ParallelFirewall");

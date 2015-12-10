@@ -67,7 +67,7 @@ public class PacketHandler /** implements Runnable */
 				switch (p.type) {
 				case ConfigPacket:
 					Config config = p.config;
-					boolean locked = lockArray.trylockWrite(config.address);
+					boolean locked = lockArray.tryLockWrite(config.address);
 					if (locked) {
 						accessControl.setPNG(config.address,
 								config.personaNonGrata);
@@ -83,8 +83,8 @@ public class PacketHandler /** implements Runnable */
 				case DataPacket:
 					Header header = p.header;
 					Body body = p.body;
-					boolean locked = lockArray.trylockRead(header.dest);
-					if (locked) {
+					boolean isLocked = lockArray.tryLockRead(header.dest);
+					if (isLocked) {
 						// System.out.println(header.source);
 						if (accessControl.isValidDataPacket(header.source,
 								header.dest)) {
