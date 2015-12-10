@@ -69,7 +69,7 @@ class SerialFirewall {
 		timer.stopTimer();
 		final long totalCount = serialWorker.totalPackets;
 		
-		HistogramGenerator.printHistogram();
+//		HistogramGenerator.printHistogram();
 		System.out.println("count: " + totalCount);
 		System.out.println("time: " + timer.getElapsedTime());
 		System.out.println(totalCount / timer.getElapsedTime() + " pkts / ms");
@@ -120,7 +120,7 @@ class FirewallTest {
 	public static void main(String[] args) {
 		String[] myArgs = { "10000", "11", "12", "5", "1", "3", "3", "3822",
 				".24", ".04", ".96" };
-		boolean serial = true;
+		boolean serial = false;
 		if (serial) {
 			SerialFirewall.main(myArgs);
 		} else {
