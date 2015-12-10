@@ -121,19 +121,23 @@ class FirewallTest {
 	public static void main(String[] args) {
 		String[] myArgs = { "3000", "11", "12", "5", "1", "3", "3", "3822",
 				".24", ".04", ".96" };
-		boolean serial = false;
-		if (serial) {
-			SerialFirewall.main(myArgs);
-		} else {
-			ParallelFirewall.main(myArgs);
-		}
+//		boolean serial = false;
+//		if (serial) {
+//			SerialFirewall.main(myArgs);
+//		} else {
+//			ParallelFirewall.main(myArgs);
+//		}
+		
+		SerialFirewall.main(myArgs);
+		ParallelFirewall.main(myArgs);
+
 	}
 }
 
 class ParallelFirewall {
-	public static int NUM_DISPATCH_THREADS = 70;
-	public static int NUM_CONCURRENT_QUEUES = 35;
-	public static int NUM_HANDLER_THREADS = 70;
+	public static int NUM_DISPATCH_THREADS = 4;
+	public static int NUM_CONCURRENT_QUEUES = 4;
+	public static int NUM_HANDLER_THREADS = 10;
 
 	public static void main(String[] args) {
 		System.out.println("ParallelFirewall");
