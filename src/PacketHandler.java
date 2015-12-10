@@ -9,6 +9,7 @@ public class PacketHandler implements Runnable {
 	private AccessControl accessControl;
 	private Fingerprint residue;
 	private int numThreads;
+	private PacketThread[] packetThreads;
 
 	public PacketHandler(int numAddresses, AccessControl ac, int numThreads) {
 		this.numThreads = numThreads;
@@ -16,6 +17,10 @@ public class PacketHandler implements Runnable {
 		this.accessControl = ac;
 		lockArray = new ReadWriteLock(this.numAddresses);
 		residue = new Fingerprint();
+		for (int i = 0; i < packetThreads.length; i++) {
+			packetThreads[i] = new PacketThread(i);
+		}
+		
 	}
 
 	@Override
