@@ -17,7 +17,6 @@ public class Dispatcher implements Runnable {
 			PaddedPrimitive<Boolean> memFence, AccessControl accessControl,
 			int numAddressesLog, PacketGenerator gen, CallbackFunction cf) {
 		this.done = done;
-		// this.inFlight = numInFlight;
 		this.memFence = memFence;
 		this.numAddresses = (int) Math.pow(2, numAddressesLog);
 		this.pktGen = gen;
@@ -28,7 +27,6 @@ public class Dispatcher implements Runnable {
 
 	@Override
 	public void run() {
-		// TODO Auto-generated method stub
 		while (!done.value) {
 			for (int i = 0; i < numAddresses; i++) {
 				Packet packet = pktGen.getPacket();
@@ -36,16 +34,9 @@ public class Dispatcher implements Runnable {
 				while (numInFlight.get() > 256 && !done.value) {
 				}
 				numInFlight.addAndGet(1);
-				// decrements the number of packets in flight
-				// CallbackFunction callbackFunc = () ->
-				// {this.numInFlight.decrementAndGet(); return
-				// numPacketsDistributed.incrementAndGet();};
-				// inFlight.value++;
 				packetHandler.handlePacket(packet, this.cf);
 			}
 		}
-		// System.out.println("Number of packets dispatched: " +
-		// numPacketsDistributed.get());
 	}
 
 }

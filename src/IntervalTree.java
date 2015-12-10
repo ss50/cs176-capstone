@@ -12,11 +12,11 @@ public class IntervalTree {
 	private IntervalTree(Map<Integer, RangeSet<Integer>> map) {
 		this.map = map;
 	}
-	
+
 	public static IntervalTree getSerialIntervalTree() {
 		return new IntervalTree(new HashMap<>());
-	}
-	
+	}				
+
 	public static IntervalTree getParallelIntervalTree() {
 		return new IntervalTree(new ConcurrentHashMap<>());
 	}
@@ -25,17 +25,29 @@ public class IntervalTree {
 		Range<Integer> toAdd = Range.closed(rangeBottom, rangeTop);
 		if (map.containsKey(address)) {
 			RangeSet<Integer> toUpdate = map.get(address);
-			toUpdate.add(toAdd);
+			synchronized (toUpdate) {
+				toUpdate.add(toAdd);
+			}
 		} else {
 			TreeRangeSet<Integer> t = TreeRangeSet.<Integer> create();
 			t.add(toAdd);
 			map.put(address, t);
 		}
+	}
 
+	public void removeAddressRange(int address, int rangeBottom, int rangeTop) {
+		Range<Integer> toRemove = Range.closed(rangeBottom, rangeTop);
+		if (map.containsKey(address)) {
+			RangeSet<Integer> toUpdate = map.get(address);
+			synchronized (toUpdate) {
+				toUpdate.remove(toRemove);
+			}
+
+		}
 	}
 
 	public boolean containsDestinationAddress(int address, int destination) {
-		if(!map.containsKey(address)){
+		if (!map.containsKey(address)) {
 			return false;
 		}
 		return map.get(address).contains(destination);

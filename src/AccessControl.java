@@ -18,6 +18,8 @@ public class AccessControl {
 	public void setAcceptingSources(int dest, int addressBegin, int addressEnd, boolean acceptingRange) {
 		if(acceptingRange){
 			dList.addAddressRange(dest, addressBegin, addressEnd);
+		} else {
+			dList.removeAddressRange(dest, addressBegin, addressEnd);
 		}
 	}
 	
