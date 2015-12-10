@@ -20,17 +20,16 @@ public class ConcurrentQueue{
 	public static boolean enqueue(int index, PacketCallbackBundle item) {
 		// TODO Auto-generated method stub
 		if (sizes[index % queue.length].get() > queueSize) {
-			System.out.println("Queue is full. retrying");
 			return false;
 		}
-		System.out.println("enqueue " + sizes[index].get());
+//		System.out.println("enqueue " + sizes[index].get());
 
 		sizes[index % queue.length].incrementAndGet();
 		return queue[index % queue.length].offer(item);
 	}
 
 	public static PacketCallbackBundle dequeue(int index) {
-		System.out.println("dequeue " + sizes[index].get());
+//		System.out.println("dequeue " + sizes[index % queue.length].get());
 		PacketCallbackBundle toReturn = queue[index % queue.length].poll();
 		sizes[index % queue.length].addAndGet(toReturn == null ? 0 : -1);
 		return toReturn;

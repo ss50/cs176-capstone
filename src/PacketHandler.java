@@ -1,5 +1,6 @@
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class PacketHandler /** implements Runnable */ {
 
@@ -10,9 +11,9 @@ public class PacketHandler /** implements Runnable */ {
 	private Fingerprint residue;
 	private int numThreads;
 	private PacketThread[] packetThreads;
-	private PaddedPrimitiveNonVolatile<Boolean> done;
+	private AtomicBoolean done;
 
-	public PacketHandler(int numAddresses, AccessControl ac, int numThreads, PaddedPrimitiveNonVolatile<Boolean> done) {
+	public PacketHandler(int numAddresses, AccessControl ac, int numThreads, AtomicBoolean done) {
 		this.numThreads = numThreads;
 		this.numAddresses = numAddresses;
 		this.accessControl = ac;
@@ -52,15 +53,9 @@ public class PacketHandler /** implements Runnable */ {
 		@Override
 		public void run() {
 			// TODO Auto-generated method stub
-			while (!done.value) {
+			while (!done.get()) {
 				PacketCallbackBundle bundle = ConcurrentQueue.dequeue(this.queueIndex);
 				if(bundle == null){
-					try {
-						Thread.sleep(100);
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
 					continue;
 				}
 				Packet p = bundle.packet;

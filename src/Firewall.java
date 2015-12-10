@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 class SerialFirewall {
@@ -130,9 +131,9 @@ class FirewallTest {
 }
 
 class ParallelFirewall {
-	public static int NUM_DISPATCH_THREADS = 1;
-	public static int NUM_CONCURRENT_QUEUES = 1;
-	public static int NUM_HANDLER_THREADS = 3;
+	public static int NUM_DISPATCH_THREADS = 70;
+	public static int NUM_CONCURRENT_QUEUES = 35;
+	public static int NUM_HANDLER_THREADS = 70;
 
 	public static void main(String[] args) {
 		System.out.println("ParallelFirewall");
@@ -153,8 +154,9 @@ class ParallelFirewall {
 				numTrainsLog, meanTrainSize, meanTrainsPerComm, meanWindow,
 				meanCommsPerAddress, meanWork, configFraction, pngFraction,
 				acceptingFraction);
-		PaddedPrimitiveNonVolatile<Boolean> done = new PaddedPrimitiveNonVolatile<Boolean>(
-				false);
+//		PaddedPrimitiveNonVolatile<Boolean> done = new PaddedPrimitiveNonVolatile<Boolean>(
+//				false);
+		AtomicBoolean done = new AtomicBoolean();
 		PaddedPrimitiveNonVolatile<Integer> numInFlight = new PaddedPrimitiveNonVolatile<Integer>(
 				0);
 		PaddedPrimitive<Boolean> memFence = new PaddedPrimitive<Boolean>(false);
@@ -224,7 +226,7 @@ class ParallelFirewall {
 		} catch (InterruptedException ignore) {
 			;
 		}
-		done.value = true;
+		done.set(true);
 		memFence.value = true;
 		try {
 			for(Thread t: dispatcherThreads){

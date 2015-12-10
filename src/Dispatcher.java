@@ -2,7 +2,7 @@ import java.util.concurrent.atomic.*;
 
 public class Dispatcher implements Runnable {
 
-	PaddedPrimitiveNonVolatile<Boolean> done;
+	AtomicBoolean done;
 	PaddedPrimitiveNonVolatile<Integer> inFlight;
 	PaddedPrimitive<Boolean> memFence;
 	private PacketGenerator pktGen;
@@ -13,7 +13,7 @@ public class Dispatcher implements Runnable {
 	private CallbackFunction cf;
 	private int queueIndex;
 
-	public Dispatcher(PaddedPrimitiveNonVolatile<Boolean> done,
+	public Dispatcher(AtomicBoolean done,
 			PaddedPrimitiveNonVolatile<Integer> numInFlight,
 			PaddedPrimitive<Boolean> memFence, AccessControl accessControl,
 			int numAddressesLog, PacketGenerator gen, CallbackFunction cf,
@@ -31,7 +31,7 @@ public class Dispatcher implements Runnable {
 
 	@Override
 	public void run() {
-		while (!done.value) {
+		while (!done.get()) {
 			// no need for numAddresses loop since multiple threads are running
 			// for (int i = 0; i < numAddresses; i++) {
 			Packet packet = pktGen.getPacket();
@@ -40,13 +40,7 @@ public class Dispatcher implements Runnable {
 //			}
 			numInFlight.addAndGet(1);
 			PacketCallbackBundle p = new PacketCallbackBundle(this.cf, packet);
-			while (!ConcurrentQueue.enqueue(this.queueIndex, p)) {
-				try {
-					Thread.sleep(30);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+			while (!ConcurrentQueue.enqueue(this.queueIndex, p) && !done.get()) {
 			}
 		}
 	}
