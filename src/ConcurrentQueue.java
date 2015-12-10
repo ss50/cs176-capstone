@@ -15,7 +15,7 @@ public class ConcurrentQueue{
 
 	public static boolean enqueue(int index, PacketCallbackBundle item) {
 		// TODO Auto-generated method stub
-		if (queue[index].size() > 256) {
+		if (queue[index].size() > queueSize) {
 			return false;
 		}
 		return queue[index].offer(item);
