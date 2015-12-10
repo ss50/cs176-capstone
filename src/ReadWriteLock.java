@@ -30,5 +30,13 @@ public class ReadWriteLock {
 	public void unlockWrite(int address) {
 		locks[addressToHashIndex(address)].writeLock().unlock();
 	}
+	
+	public boolean tryLockRead(int address) {
+		return locks[addressToHashIndex(address)].readLock().tryLock();
+	}
+	
+	public boolean tryLockWrite(int address) {
+		return locks[addressToHashIndex(address)].writeLock().tryLock();
+	}
 
 }
