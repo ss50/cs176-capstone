@@ -115,7 +115,7 @@ class FirewallTest {
 	public static void main(String[] args) {
 		String[] myArgs = { "10000", "11", "12", "5", "1", "3", "3", "3822",
 				".24", ".04", ".96" };
-		boolean serial = true;
+		boolean serial = false;
 		if (serial) {
 			SerialFirewall.main(myArgs);
 		} else {
@@ -125,10 +125,11 @@ class FirewallTest {
 }
 
 class ParallelFirewall {
+	public static int NUM_DISPATCH_THREADS = 50;
+
 	public static void main(String[] args) {
 		System.out.println("ParallelFirewall");
 		final int numMilliseconds = Integer.parseInt(args[0]);
-
 		final int numAddressesLog = Integer.parseInt(args[1]);
 		final int numTrainsLog = Integer.parseInt(args[2]);
 		final double meanTrainSize = Double.parseDouble(args[3]);
@@ -183,10 +184,13 @@ class ParallelFirewall {
 		CallbackFunction callbackFunc = () -> {
 			return numPacketsDistributed.incrementAndGet();
 		};
-
-		Dispatcher dispatcher = new Dispatcher(done, numInFlight, memFence,
-				accessControl, numAddressesLog, pktGen, callbackFunc);
-		Thread dispatcherThread = new Thread(dispatcher);
+		
+		Thread[] dispatcherThreads = new Thread[NUM_DISPATCH_THREADS];
+		for (int i = 0; i < NUM_DISPATCH_THREADS; i++) {
+			Dispatcher dispatcher = new Dispatcher(done, numInFlight, memFence,
+					accessControl, numAddressesLog, pktGen, callbackFunc);
+			dispatcherThreads[i] = new Thread(dispatcher);
+		}
 
 		// Allocate and initialize an array of Worker classes, implementing
 		// Runnable
@@ -197,7 +201,9 @@ class ParallelFirewall {
 		// ...
 		timer.startTimer();
 		// ...
-		dispatcherThread.start();
+		for (int i = 0; i < NUM_DISPATCH_THREADS; i++) {
+			dispatcherThreads[i].start();
+		}
 		// Call start() for the Dispatcher thread
 		// ...
 		// Call join() for Dispatcher thread
@@ -212,7 +218,9 @@ class ParallelFirewall {
 		done.value = true;
 		memFence.value = true;
 		try {
-			dispatcherThread.join();
+			for(Thread t: dispatcherThreads){
+				t.join();
+			}
 		} catch (InterruptedException e) {
 			;
 		}
@@ -222,7 +230,7 @@ class ParallelFirewall {
 		// numPacketsDistributed.get());
 		System.out.println("count: " + numPacketsDistributed);
 		System.out.println("time: " + timer.getElapsedTime());
-		System.out.println((float)numPacketsDistributed.get() / timer.getElapsedTime()
-				+ " pkts / ms");
+		System.out.println((float) numPacketsDistributed.get()
+				/ timer.getElapsedTime() + " pkts / ms");
 	}
 }
