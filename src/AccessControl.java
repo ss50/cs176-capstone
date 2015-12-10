@@ -32,4 +32,12 @@ public class AccessControl {
 	public boolean isPNG(int sourceAddress){
 		return pngList.contains(sourceAddress) ? pngList.get(sourceAddress) : false;
 	}
+	
+	public void printDList() {
+		dList.printAllRanges();
+	}
+	
+	public int getDListSize() {
+		return dList.getSize();
+	}
 }

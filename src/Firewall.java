@@ -41,8 +41,11 @@ class SerialFirewall {
 			accessControl.setAcceptingSources(config.address,
 					config.addressBegin, config.addressEnd,
 					config.acceptingRange);
+			System.out.println("Address: " + config.address + " Size of map: " + accessControl.getDListSize());
 		}
-
+		
+		accessControl.printDList();
+		
 		SerialPacketWorker serialWorker = new SerialPacketWorker(done, pktGen,
 				accessControl);
 		Thread workerThread = new Thread(serialWorker);
@@ -115,7 +118,7 @@ class FirewallTest {
 	public static void main(String[] args) {
 		String[] myArgs = { "10000", "11", "12", "5", "1", "3", "3", "3822",
 				".24", ".04", ".96" };
-		boolean serial = true;
+		boolean serial = false;
 		if (serial) {
 			SerialFirewall.main(myArgs);
 		} else {
@@ -171,6 +174,8 @@ class ParallelFirewall {
 					config.addressBegin, config.addressEnd,
 					config.acceptingRange);
 		}
+		
+		accessControl.printDList();
 		// AtomicQueue packetQueues[] = new AtomicQueue[numSources];
 
 		/*

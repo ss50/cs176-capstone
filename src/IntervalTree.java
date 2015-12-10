@@ -9,7 +9,7 @@ import com.google.common.collect.TreeRangeSet;
 public class IntervalTree {
 	private Map<Integer, RangeSet<Integer>> map;
 
-	private IntervalTree(Map map) {
+	private IntervalTree(Map<Integer, RangeSet<Integer>> map) {
 		this.map = map;
 	}
 	
@@ -46,6 +46,21 @@ public class IntervalTree {
 		for (Range<Integer> ran : r.asRanges()) {
 			System.out.println(ran.toString());
 		}
+	}
+	
+	public void printAllRanges() {
+		for (Map.Entry<Integer, RangeSet<Integer>> entry : map.entrySet()) {
+			System.out.print(entry.getKey() + ": ");
+			RangeSet<Integer> r = entry.getValue();
+			for (Range<Integer> ran : r.asRanges()) {
+				System.out.print(ran.toString() + ", ");
+			}
+			System.out.println();
+		}
+	}
+	
+	public int getSize() {
+		return map.entrySet().size();
 	}
 
 }

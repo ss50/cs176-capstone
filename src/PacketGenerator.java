@@ -70,10 +70,11 @@ class PacketGenerator {
       return getDataPacket();
   }
   public Packet getConfigPacket() {
-    if( (numConfigPackets & 1) > 0 )
+    //if( (numConfigPackets & 1) > 0 )
       lastConfigAddress = pairGen.getPair().source;
+      int totalAddresses = 3200;
     int addressBegin = uniGen.getRand(addressesMask-configAddressMask);
-    return new Packet(new Config(lastConfigAddress, uniGen.getUnitRand() < pngFraction, 
+    return new Packet(new Config(lastConfigAddress % totalAddresses, uniGen.getUnitRand() < pngFraction, 
       uniGen.getUnitRand() < acceptingFraction, addressBegin, 
       uniGen.getRand(addressBegin+1,addressBegin+configAddressMask)));  
   }
