@@ -7,8 +7,9 @@ public class Dispatcher implements Runnable {
 	PaddedPrimitive<Boolean> memFence;
 	private PacketGenerator pktGen;
 	private int numAddresses;
-	private ConfigPacketHandler configHandler;
-	private DataPacketHandler dataHandler;
+	//private ConfigPacketHandler configHandler;
+	//private DataPacketHandler dataHandler;
+	private PacketHandler packetHandler;
 	private AccessControl accessControl;
 	private AtomicInteger numInFlight = new AtomicInteger(0);
 	private CallbackFunction cf;
@@ -23,9 +24,10 @@ public class Dispatcher implements Runnable {
 		this.numAddresses = (int) Math.pow(2, numAddressesLog);
 		this.pktGen = gen;
 		this.accessControl = accessControl;
-		configHandler = new ConfigPacketHandler(numAddresses,
-				this.accessControl);
-		dataHandler = new DataPacketHandler(numAddresses, this.accessControl);
+		//configHandler = new ConfigPacketHandler(numAddresses,
+				//this.accessControl);
+		//dataHandler = new DataPacketHandler(numAddresses, this.accessControl);
+		packetHandler = new PacketHandler(this.numAddresses, this.accessControl);
 		this.cf = cf;
 	}
 
@@ -44,17 +46,7 @@ public class Dispatcher implements Runnable {
 				// {this.numInFlight.decrementAndGet(); return
 				// numPacketsDistributed.incrementAndGet();};
 				// inFlight.value++;
-				switch (packet.type) {
-				case ConfigPacket:
-					// send to config thread pool
-					configHandler.handlePacket(packet, this.cf);
-					break;
-				case DataPacket:
-					// send to data thread pool
-
-					dataHandler.handlePacket(packet, this.cf);
-					break;
-				}
+				packetHandler.handlePacket(packet, this.cf);
 			}
 		}
 		// System.out.println("Number of packets dispatched: " +
