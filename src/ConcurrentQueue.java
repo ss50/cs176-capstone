@@ -2,22 +2,21 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 @SuppressWarnings("hiding")
 public class ConcurrentQueue{
-
-	static ConcurrentLinkedQueue<Packet> queue[];
+	static final ConcurrentLinkedQueue<PacketCallbackBundle> queue[] = new ConcurrentLinkedQueue[ParallelFirewall.NUM_DISPATCH_THREADS];
 	
-	public ConcurrentQueue(int size) {
-		for (int i = 0; i < size; i++) {
-			queue[i] = new ConcurrentLinkedQueue<Packet>();
+	public static void initialize(){
+		for (int i = 0; i < queue.length; i++) {
+			queue[i] = new ConcurrentLinkedQueue<PacketCallbackBundle>();
 		}
 	}
 	
 
-	public static boolean enqueue(int index, Packet item) {
+	public static boolean enqueue(int index, PacketCallbackBundle item) {
 		// TODO Auto-generated method stub
 		return queue[index].offer(item);
 	}
 
-	public static Packet dequeue(int index) {
+	public static PacketCallbackBundle dequeue(int index) {
 		// TODO Auto-generated method stub
 		return queue[index].poll();
 	}
