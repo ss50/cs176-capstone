@@ -100,7 +100,7 @@ class SerialQueueFirewall {
 
 class FirewallTest{
 	public static void main(String[] args){
-		String[] myArgs = {"5", "11", "12", "5", "1", "3", "3", "3822", ".24", ".04", ".96"};
+		String[] myArgs = {"5000", "11", "12", "5", "1", "3", "3", "3822", ".24", ".04", ".96"};
 		boolean serial = false;
 		if(serial){
 			SerialFirewall.main(myArgs);
