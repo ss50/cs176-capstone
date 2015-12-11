@@ -80,21 +80,9 @@ class SerialFirewall {
 
 class FirewallTest {
 	public static void main(String[] args) {
-
-		// String[] myArgs = { "5000", "11", "12", "5", "1", "3", "3", "3822",
-		// ".24", ".04", ".96" };
-		// String[] myArgs = { "5000", "12", "10", "1", "3", "3", "1", "2644",
-		// ".11", ".09", ".92" };
-		// String[] myArgs = { "5000", "12", "10", "4", "3", "6", "2", "1304",
-		// ".10", ".03", ".90" };
-		// String[] myArgs = { "5000", "14", "10", "5", "5", "6", "2", "315",
-		// ".08", ".05", ".90" };
-		// String[] myArgs = { "5000", "15", "14", "9", "16", "7", "10", "4007",
-		// ".02", ".10", ".84" };
-		// String[] myArgs = { "5000", "15", "15", "9", "10", "9", "9", "7125",
-		// ".01", ".2", ".77" };
-		// String[] myArgs = { "5000", "15", "15", "10", "13", "8", "10",
-		// "5328", ".04", ".18", ".8" };
+		// arguments for the firewall - the first argument is the number of milliseconds 
+		// taken for the dispatcher to distribute the packets followed by the parameters
+		// given for testing.
 		String[] myArgs = { "5000", "16", "14", "15", "12", "9", "5", "8840",
 				".04", ".19", ".76" };
 		for (String s : myArgs) {
@@ -106,95 +94,6 @@ class FirewallTest {
 			ParallelFirewall.main(myArgs);
 		}
 
-		// String[] myArgs2 = { "10000", "11", "12", "5", "1", "3", "3", "3822",
-		// ".24", ".04", ".96" };
-		// String[] myArgs3 = { "10000", "12", "10", "1", "3", "3", "1", "2644",
-		// ".11", ".09", ".92" };
-		// String[] myArgs4 = { "10000", "12", "10", "4", "3", "6", "2", "1304",
-		// ".10", ".03", ".90" };
-		// String[] myArgs5 = { "10000", "14", "10", "5", "5", "6", "2", "315",
-		// ".08", ".05", ".90" };
-		// String[] myArgs6 = { "10000", "15", "14", "9", "16", "7", "10",
-		// "4007", ".02", ".10", ".84" };
-		// String[] myArgs7 = { "10000", "15", "15", "9", "10", "9", "9",
-		// "7125", ".01", ".2", ".77" };
-		// String[] myArgs8 = { "10000", "15", "15", "10", "13", "8", "10",
-		// "5328", ".04", ".18", ".8" };
-		// String[] myArgs9 = { "10000", "16", "14", "15", "12", "9", "5",
-		// "8840", ".04", ".19", ".76" };
-
-		//
-		// for(String s: myArgs2){
-		// System.out.print(s + " ");
-		// }
-		// System.out.println();
-		// SerialFirewall.main(myArgs2);
-		// System.out.println();
-		// ParallelFirewall.main(myArgs2);
-		// System.out.println();
-		//
-		// for(String s: myArgs3){
-		// System.out.print(s + " ");
-		// }
-		// System.out.println();
-		// SerialFirewall.main(myArgs3);
-		// System.out.println();
-		// ParallelFirewall.main(myArgs3);
-		// System.out.println();
-		//
-		// for(String s: myArgs4){
-		// System.out.print(s + " ");
-		// }
-		// System.out.println();
-		// SerialFirewall.main(myArgs4);
-		// System.out.println();
-		// ParallelFirewall.main(myArgs4);
-		// System.out.println();
-		//
-		// for(String s: myArgs5){
-		// System.out.print(s + " ");
-		// }
-		// System.out.println();
-		// SerialFirewall.main(myArgs5);
-		// System.out.println();
-		// ParallelFirewall.main(myArgs5);
-		// System.out.println();
-		//
-		// for(String s: myArgs6){
-		// System.out.print(s + " ");
-		// }
-		// System.out.println();
-		// SerialFirewall.main(myArgs6);
-		// System.out.println();
-		// ParallelFirewall.main(myArgs6);
-		// System.out.println();
-		//
-		// for(String s: myArgs7){
-		// System.out.print(s + " ");
-		// }
-		// System.out.println();
-		// SerialFirewall.main(myArgs7);
-		// System.out.println();
-		// ParallelFirewall.main(myArgs7);
-		// System.out.println();
-		//
-		// for(String s: myArgs8){
-		// System.out.print(s + " ");
-		// }
-		// System.out.println();
-		// SerialFirewall.main(myArgs8);
-		// System.out.println();
-		// ParallelFirewall.main(myArgs8);
-		// System.out.println();
-		//
-		// for(String s: myArgs9){
-		// System.out.print(s + " ");
-		// }
-		// System.out.println();
-		// SerialFirewall.main(myArgs9);
-		// System.out.println();
-		// ParallelFirewall.main(myArgs9);
-		// System.out.println();
 
 	}
 }
